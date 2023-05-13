@@ -1,0 +1,37 @@
+{% extends "base/table_view_base_billing.html" %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+{% load widget_tweaks static %}
+
+{% block meta_title %}
+    {% trans "Instrument Batch > Select" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Instrument Batch > Select" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active">{% trans "Instrument Batch" %}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Select the instrument" %}
+{% endblock %}
+
+{% block main_toolbar %}
+ 
+{% endblock %}
+
+{% block extra_css %}
+ <link rel="stylesheet" href="{% static "assets/css/daterangepicker.css" %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static "assets/js/moment.min.js" %}"></script>
+<script src="{% static "assets/js/daterangepicker.js" %}"></script>
+{% endblock %}
+
+{% block main_inner %}
+    {% render_table instrumentbatchmodetable "tables2/bootstrapped-tables2.html" %}
+{% endblock %}

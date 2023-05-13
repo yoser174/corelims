@@ -1,0 +1,19 @@
+{% load i18n wa_status %}
+
+<div class="btn-group btn-group-sm" role="group">
+  {% if perms.corelism.change_orders %} {{ area_pk | status_of_wa:record.pk }}
+
+  <td>
+    <button
+      class="btn btn-info"
+      onclick="location.href=
+        	'{% url 'order_results_wa' area_pk record.pk %}'"
+      title="{% trans 'View/Edit Result' %}"
+      data-toggle="tooltip"
+      data-placement="top"
+    >
+      <span class="glyphicon glyphicon-pencil"></span>
+    </button>
+  </td>
+  {% endif %}
+</div>

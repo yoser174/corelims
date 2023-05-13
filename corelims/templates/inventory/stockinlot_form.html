@@ -1,0 +1,72 @@
+{% extends "base/form_view_base.html" %} 
+{% load i18n crispy_forms_tags crispy_forms_field crispy_forms_filters bootstrap3 %} 
+{% block meta_title %} 
+{% trans "Stock in Lot information" %} {% endblock %} {% block title %}
+{% trans "Stock in Lot information" %} {% endblock %} {% block breadcrumb_menu %}
+<li class="active"><a href="{% url 'stockin_list' %}">{% trans "Stock in" %}</a></li>
+<li class="active">{% if stockin %}{% trans "Edit Stock in Lot"	%}
+{% else %}{% trans "Edit stock in Lot" %}{% endif%}</li>
+{% endblock %} {% block main_header %} {% if stockin %}{% trans "Edit Stock in lot" %}{% else %}
+{% trans "Add stock in lot" %}{% endif%} {% endblock %} {% block main_toolbar %}
+<button type='submit' class='btn btn-primary'>{% trans "Save" %}</button>
+
+<button type="button" class="btn btn-default"
+	onclick="window.location.assign('{% url 'stockin_list' %}')">
+	{% trans "Cancel" %}</button>
+
+
+
+{% endblock %} {% block main_inner %}
+<div style="padding: 10px;">
+	<div class="panel-body well">
+		<div style="margin-top: -20px;">
+			<br>
+			<table>
+				<tr>
+					<td><h4>{% trans 'Stock in' %}:</h4></td>
+					<td><h4>{{ stockinlot.stock_in.product }}</h4></td>
+				</tr>
+				<tr>
+					<td><h4>{% trans 'Qty' %}:</h4></td>
+					<td><h4>{{ stockinlot.stock_in.quantity }}</h4></td>
+				</tr>
+				<tr>
+					<td>{% trans 'Date of creation' %}:</td>
+					<td>{{ stockinlot.dateofcreation }}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+{% crispy form %}
+
+        <div>
+            {{ position_formset.management_form|crispy }}
+        </div>
+        
+        <div style="padding: 10px;">
+	<div class="panel-body well">
+
+		<div style="margin-top: -20px;">
+			<br>
+			<table>
+				<tr>
+					<td>{% trans 'Last modified' %}:</td>
+					<td>{{ stockinlot.lastmodification }}</td>
+				</tr>
+				<tr>
+					<td>{% trans 'Last modified by' %}:</td>
+					<td>{{ stockinlot.lastmodifiedby }}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+ {% endblock %} 
+ {% block main_footer %}
+<button type='submit' class='btn btn-primary'>{% trans "Save" %}</button>
+
+<button type="button" class="btn btn-default"
+	onclick="window.location.assign('{% url 'stockin_list' %}')">
+	{% trans "Cancel" %}</button>
+{% endblock %}

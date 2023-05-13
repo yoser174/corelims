@@ -1,0 +1,73 @@
+{% extends "base/table_view_base.html" %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+{% load widget_tweaks %}
+
+{% block meta_title %}
+    {% trans "Products" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Products" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active">{% trans "Products" %}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Products" %}
+{% endblock %}
+
+{% block main_toolbar %}
+    {% if perms.crm_core.add_product %}
+        <button class="btn btn-success" onclick="location.href='{% url 'product_create' %}'"
+                title="{% trans 'Create Product' %}" data-toggle="tooltip" data-placement="top">
+            <span class="glyphicon glyphicon-plus"></span></button>
+    {% endif %}
+{% endblock %}
+
+{% block main_inner %}
+
+<form method="get">
+    <div class="well">
+      <h4 style="margin-top: 0"><a href='{{ request.path }}' >Clear</a></h4>
+      <div class="row">
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.number.label_tag }}
+          {% render_field filter.form.number class="form-control" %}
+        </div>
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.name.label_tag }}
+          {% render_field filter.form.name class="form-control" %}
+        </div>
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.supplier.label_tag }}
+          {% render_field filter.form.supplier class="form-control" %}
+        </div>
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.vendor.label_tag }}
+          {% render_field filter.form.vendor class="form-control" %}
+        </div>
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.active.label_tag }}
+          {% render_field filter.form.active class="form-control" %}
+        </div>
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.temperature_condition.label_tag }}
+          {% render_field filter.form.temperature_condition class="form-control" %}
+        </div>
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.base_unit.label_tag }}
+          {% render_field filter.form.base_unit class="form-control" %}
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-search"></span> Search
+      </button>
+       
+    </div>
+  </form>
+
+    {% render_table producttable "tables2/bootstrapped-tables2.html" %}
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base/table_view_base.html" %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+{% load querystring from django_tables2 %}
+{% load widget_tweaks %}
+{% load staticfiles %}
+
+{% block meta_title %}
+    {% trans "Product stock" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Product stock" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active">{% trans "Product stock" %}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Products" %}
+{% endblock %}
+
+{% block main_toolbar %}
+        <button class="btn btn-info" onclick="location.href='{% url 'productstock_csv' %}'"
+                title="{% trans 'Export CSV' %}" data-toggle="tooltip" data-placement="top">
+            <span class="fa fa-file-text"></span></button>
+{% endblock %}
+
+{% block extra_css %}
+ 	<link href="{% static "assets/css/datetimepicker.css" %}" type="text/css" media="all" rel="stylesheet" />
+    {% endblock %}
+    
+    {% block extra_js %}
+    <script type="text/javascript" src="{% static "assets/js/bootstrap-datetimepicker.js" %}"></script>
+    <script type="text/javascript" src="{% static "assets/js/locales/bootstrap-datetimepicker.id.js" %}"></script>
+    {% endblock %}
+
+{% block main_inner %}
+    {% render_table stocktable "tables2/bootstrapped-tables2.html" %}
+{% endblock %}

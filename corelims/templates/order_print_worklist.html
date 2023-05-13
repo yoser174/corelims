@@ -1,0 +1,56 @@
+{% load humanize %} 
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta content="text/html; charset=windows-1252"
+	http-equiv="content-type">
+<title>WORKLIST</title>
+<script type="text/javascript">
+//window.print();
+//window.onfocus=function(){ window.close(); }
+</script>
+</head>
+<body style="font-family: Ruda; font-size: 6pt;">
+	<!-- awal header-->
+	<!-- akhir -->
+
+	<table width="90%" align="center" cellspacing="0" cellpadding="2"
+		border="0">
+		<tbody>
+			<tr>
+				<td align="center"><big><span style="font-weight: bold;">
+							LABORATORIUM - RSUD KOTA MADIUN <br>Jl. Campursari No. 12B
+							Telp (0351)481314 <br>LEMBAR KERJA</span></big></td>
+			</tr>
+		</tbody>
+	</table>
+	<br>
+	<table width="90%" align="center" cellspacing="0" cellpadding="2"
+		border="0">
+		<thead>
+		<tr >
+		<td><strong>Nomor Order</strong></td>
+		<td><strong>Nama Pasien</strong></td>
+		<td><strong>JK/Umur</strong></td>
+		<td><strong>Pengirim/Dokter</strong></td>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+		<td><strong>{{ order.number}}<br>{{ order.order_date}}<br>{{ order.priority.name }}</strong></td>
+		<td><strong>{{ order.patient.patient_id}}<br>{{ order.patient.name}}</strong></td>
+		<td><strong>{{ order.patient.gender.name}}<br>{{ order.patient.calculate_age}} tahun</strong></td>
+		<td><strong>{{ order.origin.name }}<br>{{ order.doctor.name }}<br>{{ order.diagnosis.name }}</strong></td>
+		</tr>
+		{% for tes in order.get_tests %}
+		<tr>
+		<td></td>
+		<td>{{ tes }}</td>
+		<td></td>
+		<td></td>
+		</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</body>
+</html>

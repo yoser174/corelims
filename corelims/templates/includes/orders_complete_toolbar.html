@@ -1,0 +1,19 @@
+{% load i18n wa_status %}
+
+<div class="btn-group btn-group-sm" role="group">
+  {% if perms.corelism.change_orders %}
+
+  <td>
+    <button
+      class="btn btn-info"
+      onclick="location.href=
+        	'{% url 'complete_results' record.pk %}'"
+      title="{% trans 'View Result' %}"
+      data-toggle="tooltip"
+      data-placement="top"
+    >
+      <span class="glyphicon glyphicon-pencil"></span>
+    </button>
+  </td>
+  {% endif %}
+</div>

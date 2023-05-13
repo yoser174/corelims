@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}"{% if LANGUAGE_BIDI %} dir="rtl"{% endif %}>
+{% load i18n staticfiles avatar_tags  %}
+{% load bootstrap3 %}
+{% load avatar_tags %}
+{% load l10n %}
+
+
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
+<meta name="description" content="{% block meta_description %}{% endblock %}">
+<title>.:[{{ APP_VERSION }}]:. {% block meta_title %}{% endblock %}{% if settings.SITE_TITLE %} | {{ settings.SITE_TITLE }}{% endif %} </title>
+<link rel="shortcut icon" href="{% static "img/favicon.ico" %}">
+
+
+    <link rel="stylesheet" href="{% static "assets/css/bootstrap.css" %}">
+    <link rel="stylesheet" href="{% static "assets/font-awesome/css/all.css" %}">
+    <link rel="stylesheet" href="{% static "assets/lineicons/style.css" %}">
+    <link rel="stylesheet" href="{% static "assets/js/gritter/css/jquery.gritter.css" %}">
+    <link rel="stylesheet" href="{% static "assets/css/style.css" %}">
+    <link rel="stylesheet" href="{% static "assets/css/style-responsive.css" %}">
+
+    {% block extra_css %}
+    {% endblock %}
+
+    
+    <script src="{% static "assets/js/common-scripts.js" %}"></script>
+    <script src="{% static "assets/js/chart-master/Chart.js" %}"></script>
+    <script src="{% static "assets/js/jquery-3.3.1.js" %}"></script>
+    <script src="{% static "assets/js/jquery-1.8.3.min.js" %}"></script>
+    <script src="{% static "assets/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "assets/js/jquery.formset.js" %}"></script>
+    <script src="{% static "assets/js/jquery.nicescroll.js" %}" type="text/javascript"></script>
+    <script src="{% static "assets/js/jquery.scrollTo.min.js" %}"></script>
+    <script class="include" type="text/javascript" src="{% static "assets/js/jquery.dcjqaccordion.2.7.js" %}"></script>
+
+    {% block extra_js %}
+    {% endblock %}
+
+
+<!--[if lt IE 9]>
+<script src="{% static "js/html5shiv.js" %}"></script>
+<script src="{% static "js/respond.min.js" %}"></script>
+<![endif]-->
+
+{% block extra_head %}{% endblock %}
+</head>
+
+<body id="{% block body_id %}body{% endblock %}">
+
+<section id="container" >
+
+      <!-- **********************************************************************************************************************************************************
+      TOP BAR CONTENT & NOTIFICATIONS
+      *********************************************************************************************************************************************************** -->
+      <!--header start-->
+      <header class="header black-bg">
+              <div class="sidebar-toggle-box">
+                  <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+              </div>
+            <!--logo start-->
+            <p style="float: left;margin-top: -8px;">
+                <a href="/" class="logo" style="float: left"><b>{{ APP_NAME }}</b></a>
+                <br><span style="float: left" class="muted small">Clinical Laboratory</span>
+            </p>
+            <!--logo end-->
+
+            <div class="nav notify-row" id="top_menu">
+
+
+                {% if user.is_authenticated %}
+                    <!--  notification start -->
+                    <ul class="nav top-menu">
+                    
+                    </ul>
+                    
+                    <!--  notification end -->
+                {% endif %}
+
+            </div>
+            {% if user.is_authenticated %}
+            <div class="top-menu nav pull-right" style="margin-top: 12px;">
+                 <li><a href="/logout/"><i class="fa fa-sign-out"></i>Logout</a></li>
+            </div>
+            {% endif %}
+        </header>
+      <!--header end-->
+
+      <!-- **********************************************************************************************************************************************************
+      MAIN SIDEBAR MENU
+      *********************************************************************************************************************************************************** -->
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu" id="nav-accordion">
+
+                  {% if user.is_authenticated %}
+
+              	    <p class="centered">
+                    
+                        <a href="{% url 'avatar_change_billing' %}">
+                        
+                        {% avatar user 60 class="img-thumbnail" width="60" height="60" %}
+                
+                        </a>
+                        <h5 class="centered">
+                            <a href="{% url 'profile_update_billing' user.pk %}">
+                                {{ user }}
+                            </a>
+                        </h5>
+                    </p>
+                    {% if perms.admin %}
+                    <li><a href="/admin/"><i class="fa fa-cogs"></i>{% trans "Administration" %}</a></li>
+                    {% endif %}
+
+
+                  {% else %}
+
+                      <li><a href="/login/"><i class="fa fa-sign-in"></i>{% trans "Login" %}</a></li>
+
+                  {% endif %}
+
+                  {% if user.is_authenticated %}
+                  
+                  <li class="mt">
+                      <a {% if  '/dashboard/' in request.path %} class="active"{% endif %} href="/dashboard/">
+                          <i class="fa fa-tachometer-alt"></i>
+                          <span>{% trans "Dashboard" %}</span>
+                      </a>
+                  </li>
+                  
+                  <li class="sub-menu">
+                      <a {% if  '/orders/' in request.path or  '/patients/' in request.path  %} class="active"{% endif %} href="javascript:;" >
+                          <i class="fa fa-list"></i>
+                          <span>{% trans "Billing" %}</span>
+                      </a>
+                      <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if  '/orders/' in request.path %} class="active"{% endif %} ><a href="/orders/">{% trans "Orders" %}</a></li>{% endif %}
+                      </ul>
+                      <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if  '/patients/' in request.path %} class="active"{% endif %} ><a href="/patients/">Patients</a></li>{% endif %}
+                      </ul>
+                  </li>
+                  
+                  <li class="sub-menu">
+                      <a {% if 'workarea' in request.path or  '/instrument_batch/' or  'orders/results' in request.path or '/complete/' in request.path or '/sample_receive/' in request.path %} class="active"{% endif %} href="javascript:;" >
+                          <i class="fa fa-list"></i>
+                          <span>{% trans "Clinical Lab" %}</span>
+                      </a>
+                      
+                      <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if  '/sample_receive/' in request.path %} class="active"{% endif %} >
+                          <a href="/sample_receive/">{% trans "Sample receive" %}</a></li>{% endif %}
+                      </ul>
+                      
+                      	
+                      <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if  '/worklists/' in request.path %} class="active"{% endif %} >
+                          <a href="/worklists/">{% trans "Batch worklist" %}</a></li>{% endif %}
+                      </ul>
+                      
+                      <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if  '/instrument_batch/' in request.path %} class="active"{% endif %} >
+                          <a href="/instrument_batch/">{% trans "Instrument Batch" %}</a></li>{% endif %}
+                      </ul>
+                      
+                      <ul class="sub" style>
+                          {% if perms.corelism.view_orders %} 
+                          <li class="sub-menu" >
+                          <a {% if 'workarea' in request.path or 'orders/results' in request.path %} class="active"{% endif %}>
+                          {% trans "Workarea" %}</a>
+                  
+                          	<ul class="sub">
+                          		<li {% if 'workarea' in request.path %} class="active"{% endif %} >
+                          		 <a href="/workarea/">{% trans "All area" %}</a></li>
+                          		 {% for area in workareas %}
+                          		
+                          		 <li {% if  '/workarea/{{ area.id }}/' in request.path %} class="active"{% endif %} >
+                          		 <a href="/workarea/{{ area.id }}/">{{ area }}</a></li>
+                          		 {% endfor %}
+                          	</ul>
+                          </li>
+                          	
+                          {% endif %}
+                          
+                      </ul>
+                      <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if  '/complete/' in request.path %} class="active"{% endif %} >
+                          <a href="/complete/">{% trans "Complete orders" %}</a></li>{% endif %}
+                      </ul>
+                  </li>
+                  
+                  <li class="sub-menu">
+                      <a {% if request.path == '/reptest/' or request.path == '/reports/orders/' or request.path == '/reports/jm/' or request.path == '/reports/insurance/' or request.path == '/reports/tests/' or request.path == '/reports/tats/' %} class="active"{% endif %} href="javascript:;" >
+                          <i class="fa fa-file"></i>
+                          <span>{% trans "Report" %}</span>
+                      </a>
+                      <!-- <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if request.path == '/reports/inpatmedsrv/'%} class="active"{% endif %} ><a href="/reports/inpatmedsrv/">{% trans "Inpatient med. service" %}</a></li>{% endif %}   
+                      </ul> -->
+                      <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if request.path == '/reports/orders/'%} class="active"{% endif %} ><a href="/reports/orders/">{% trans "Orders" %}</a></li>{% endif %}
+                      </ul>
+                      <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if request.path == '/reports/ordertests/'%} class="active"{% endif %} ><a href="/reports/ordertests/">{% trans "Order tests" %}</a></li>{% endif %}
+                      </ul>
+                      <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if request.path == '/reports/tats/'%} class="active"{% endif %} ><a href="/reports/tats/">{% trans "Response time" %}</a></li>{% endif %}
+                      </ul>
+                      <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if request.path == '/reports/jm/'%} class="active"{% endif %} ><a href="/reports/jm/">{% trans "Order list" %}</a></li>{% endif %}
+                      </ul>
+                      <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if request.path == '/reports/origin/'%} class="active"{% endif %} ><a href="/reports/origin/">{% trans "Origin" %}</a></li>{% endif %}
+                      </ul>
+                      <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if request.path == '/reports/insurance/'%} class="active"{% endif %} ><a href="/reports/insurance/">{% trans "Cara bayar" %}</a></li>{% endif %}
+                      </ul>
+                      <ul class="sub">
+                          {% if perms.corelism.view_orders %} <li {% if request.path == '/reports/tests/'%} class="active"{% endif %} ><a href="/reports/tests/">{% trans "Test" %}</a></li>{% endif %}
+                      </ul>
+                      
+                  </li>
+                  
+                   
+
+                  {% endif %}
+
+                   
+
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
+
+      <!-- **********************************************************************************************************************************************************
+      MAIN CONTENT
+      *********************************************************************************************************************************************************** -->
+      <!--main content start-->
+      <section id="main-content">
+          <section class="wrapper">
+
+            <div class="row">
+                <div class="col-lg-10 main-chart">
+                    <div class="row mt">
+                        <div style="margin-top: 10px;">
+                            <ul class="breadcrumb" style="background-color: white;">
+                            {% spaceless %}
+                                <li id="breadcrumb-menu-home"><a href="/">{% trans "Home" %}</a></li>
+                            {% block breadcrumb_menu %}
+                                
+                            {% endblock %}
+                            {% endspaceless %}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    
+                    {% if messages %}
+                    <div class="row mt">
+                        <div class="messages">
+                        {% for message in messages %}
+                            <div class="alert alert-dismissable alert-{{ message.tags }}" data-alert="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    
+                    
+                    <div class="row mt">
+                        {% block main %}{% endblock %}
+                    </div>
+                </div>
+
+
+              <!-- **********************************************************************************************************************************************************
+              RIGHT SIDEBAR CONTENT
+              *********************************************************************************************************************************************************** -->
+            </div>
+          </section>
+      </section>
+
+
+      <div style="margin-bottom: 0">
+      <!--footer start-->
+      <!--footer end-->
+      </div>
+
+</section>
+
+
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script class="include" src="{%  static "assets/js/jquery.dcjqaccordion.2.7.js" %}"></script>
+    <script src="{% static "assets/js/jquery.scrollTo.min.js" %}"></script>
+    <script src="{% static "assets/js/jquery.nicescroll.js" %}"></script>
+    <script src="{% static "assets/js/jquery.sparkline.js" %}"></script>
+    {% bootstrap_javascript %}
+
+
+    <!--common script for all pages-->
+    <script src="{% static "assets/js/common-scripts.js" %}"></script>
+
+    <script type="text/javascript" src="{% static "assets/js/gritter/js/jquery.gritter.js" %}"></script>
+    <script type="text/javascript" src="{% static "assets/js/gritter-conf.js" %}"></script>
+
+    <!--script for this page-->
+    <script src="{% static "assets/js/sparkline-chart.js" %}"></script>
+
+    {% block extrascript %}
+    {% endblock %}
+
+
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+{% extends "base/table_view_base.html" %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+
+{% block meta_title %}
+    {% trans "Vendors" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Vendors" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active">{% trans "Vendors" %}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Vendors" %}
+{% endblock %}
+
+{% block main_toolbar %}
+    {% if perms.crm_core.add_supplier %}
+        <button class="btn btn-success" onclick="location.href='{% url 'vendor_create' %}'"
+                title="{% trans 'Create Vendor' %}" data-toggle="tooltip" data-placement="top">
+            <span class="glyphicon glyphicon-plus"></span></button>
+    {% endif %}
+{% endblock %}
+
+{% block main_inner %}
+    {% render_table vendortable "tables2/bootstrapped-tables2.html" %}
+{% endblock %}

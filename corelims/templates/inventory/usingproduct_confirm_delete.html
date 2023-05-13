@@ -1,0 +1,38 @@
+{% extends "base/main_section_base.html" %}
+{% load i18n bootstrap3 %}
+
+{% block meta_title %}
+    {% trans "Using product" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Using product" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active"><a href="{% url 'usingproduct_list' %}">{% trans "Using product" %}</a></li>
+    <li class="active">{% trans "Delete using product" %}</li>
+{% endblock %}
+
+{% block main_header %}
+        {% trans "Delete using product" %}
+{% endblock %}
+
+{% block main_inner %}
+    <form action = ""  method = "post">
+        {% csrf_token %}
+
+        <h3 class = ''>
+            {% trans "Are you sure you want to delete the following item?" %}<br>{{object}}
+        </h3>
+
+        <button type='submit' class='btn btn-danger'>
+            {% trans "Delete" %}
+        </button>
+
+        <button type="button" class="btn btn-default"
+                onclick="window.location.assign('{% url 'supplier_list' %}')">
+            {% trans "Cancel" %}
+        </button>
+    </form>
+{% endblock %}

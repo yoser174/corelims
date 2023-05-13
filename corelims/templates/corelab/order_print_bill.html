@@ -1,0 +1,136 @@
+{% load humanize %} 
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta content="text/html; charset=windows-1252"
+	http-equiv="content-type">
+<title>BILL</title>
+<script type="text/javascript">
+window.print();
+</script>
+</head>
+<body style="font-family: Ruda; font-size: 11pt;">
+	<!-- awal header-->
+	<!-- akhir -->
+
+	<table width="90%" align="center" cellspacing="0" cellpadding="2"
+		border="0">
+		<tbody>
+			<tr>
+				<td align="center"><big><span style="font-weight: bold;">
+							{% for lab_name in org_lab_name %}{{ lab_name.char_value }}{% endfor %}
+							{% for lab_addr in org_lab_address %}{{ lab_addr.char_value }}{% endfor %}
+							<br>BON
+					</span></big></td>
+			</tr>
+		</tbody>
+	</table>
+	<br>
+	<table width="90%" align="center" cellspacing="0" cellpadding="2"
+		border="0">
+		<tbody><tr>
+		<td style="vertical-align:top;" width="20%" align="left">
+			Bukti Bon
+		</td>
+		<td style="vertical-align:top;" width="3%" align="left">
+			:
+		</td>
+		<td style="vertical-align:top;" align="left">
+					
+			<table style="border-collapse:collapse;" width="100%" cellspacing="0" border="1">
+				<tbody><tr>
+					<td align="center">
+					<font>Reagent / BHP</font>
+					</td>
+					<td align="center">
+					<font>JRS</font>
+					</td>
+					<td align="center">
+					<font>JIM</font>
+					</td>
+				</tr><tr>
+					<td align="center">
+					<font>{{ order.get_sub_total_price.tariff_subtotal|floatformat:"0"|intcomma }}</font>
+					</td>
+					<td align="center">
+					<font>.</font>
+					</td>
+					<td align="center">
+					<font>{{ order.get_sub_total_price.service_subtotal|floatformat:"0"|intcomma }}</font>
+					</td>
+				</tr>
+			</tbody></table>
+		</td>
+	</tr>
+			<tr>
+				<td style="vertical-align: top;" width="20%" align="left">Nama Pasien / No. RM</td>
+				<td style="vertical-align: top;" width="3%" align="left">:</td>
+				<td style="vertical-align: top;" colspan="2" align="left">{{ order.patient.name }} / {{ order.patient.patient_id }}</td>
+			</tr>
+			<tr>
+				<td style="vertical-align: top;" width="20%" align="left">Cara Bayar</td>
+				<td style="vertical-align: top;" width="3%" align="left">:</td>
+				<td style="vertical-align: top;" colspan="2" align="left">{{ order.insurance.name }} </td>
+			</tr>
+			<tr>
+				<td style="vertical-align: top;" align="left">Dokter Pengirim</td>
+				<td style="vertical-align: top;" align="left">:</td>
+				<td style="vertical-align: top;" colspan="2" align="left">{{ order.doctor.name }} </td>
+			</tr>
+			<tr>
+				<td style="vertical-align: top;" align="left">Alamat</td>
+				<td style="vertical-align: top;" align="left">:</td>
+				<td style="vertical-align: top;" colspan="2" align="left">{{ order.patient.address }} </td>
+			</tr>
+			<tr>
+				<td style="vertical-align: top;" align="left">No / Tanggal Resep</td>
+				<td style="vertical-align: top;" align="left">:</td>
+				<td style="vertical-align: top;" colspan="2" align="left">{{ order.number}} / {{ order.order_date }}</td>
+			</tr>
+			<tr>
+				<td style="vertical-align: top;" align="left">Ruangan</td>
+				<td style="vertical-align: top;" align="left">:</td>
+				<td style="vertical-align: top;" colspan="2" align="left">{{ order.origin.name}}</td>
+			</tr>
+			<tr>
+				<td style="vertical-align: top;" align="left">Pemeriksaan</td>
+				<td style="vertical-align: top;" align="left">:</td>
+				<td style="vertical-align: top;" colspan="2" align="left">{{ order.get_tests| join:", " }}</td>
+			</tr>
+			<tr>
+				<td style="vertical-align: top;" align="left">Terbilang</td>
+				<td style="vertical-align: top;" align="left">:</td>
+				<td style="vertical-align: top;" colspan="2" align="left"><big><b><i>{{ order.get_total_price_words }} rupiah</i></b></big></td>
+			</tr>
+			<tr>
+				<td colspan="3" align="left">
+					<table style="border-collapse: collapse;" width="60%" align="left"
+						cellspacing="6" cellpadding="6" border="1">
+						<tbody>
+							<tr style="background-color: #CCFFFF;">
+								<td align="center"><big><b><i>Jumlah Rp. {{ order.get_total_price.total|floatformat:"0"|intcomma }},-</i></b></big></td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+				<td width="30%" align="left">
+					<table style="border-collapse: collapse;" width="100%"
+						align="right" cellspacing="2" cellpadding="2" border="0">
+						<tbody>
+							<tr>
+								<td align="center">{% for lab_name in org_lab_name %}{{ lab_name.char_value }}{% endfor %}, {{ order.order_date }}</td>
+							</tr>
+							<tr>
+								<td align="center">Petugas <br>
+								<br>
+								<br>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

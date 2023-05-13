@@ -1,0 +1,50 @@
+{% extends "base/table_view_base_billing.html" %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+{% load widget_tweaks %}
+
+{% block meta_title %}
+    {% trans "Tests" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Tests" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active">{% trans "Tests" %}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Tests" %}
+{% endblock %}
+
+{% block main_toolbar %}
+    {% if perms.crm_core.add_tests %}
+        <button class="btn btn-success" onclick="location.href='{% url 'tests_create' %}'"
+                title="{% trans 'Create Tests' %}" data-toggle="tooltip" data-placement="top">
+            <span class="glyphicon glyphicon-plus"></span></button>
+    {% endif %}
+{% endblock %}
+
+{% block main_inner %}
+
+<form method="get">
+    <div class="well">
+      <h4 style="margin-top: 0"><a href='{{ request.path }}' >Clear</a></h4>
+      <div class="row">
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.name.label_tag }}
+          {% render_field filter.form.name class="form-control" %}
+        </div>
+        
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-search"></span> {% trans "Search" %}
+      </button>
+       
+    </div>
+  </form>
+
+    {% render_table teststable "tables2/bootstrapped-tables2.html" %}
+{% endblock %}

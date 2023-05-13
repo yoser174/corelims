@@ -1,0 +1,97 @@
+{% extends "base/main_section_base.html" %}
+{% load i18n staticfiles  %}
+
+{% block meta_title %}
+    {% trans "Product" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Product" %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static "assets/js/JsBarcode.all.min.js" %}"></script>
+
+
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active"><a href="{% url 'product_list' %}">{% trans "Products" %}</a></li>
+    <li class="active">{{ product.name }}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Product Details" %}
+{% endblock %}
+
+{% block main_toolbar %}
+    <div class="btn-group" role="group">
+        {% include 'includes/product_edit_toolbar.html' %}
+    </div>
+{% endblock %}
+
+{% block main_inner %}
+    <div class="col-lg-4">
+        <div style="margin-top: -20px;">
+            <br>
+            <table>
+                <tr>
+                    <td><small>{% trans 'Created' %}:&nbsp;</small></td>
+                    <td><small>{{ product.dateofcreation }}</small></td>
+                </tr>
+                <tr>
+                    <td><small>{% trans 'Last modified' %}:&nbsp;</small></td>
+                    <td><small>{{ product.lastmodification }}</small></td>
+                </tr>
+            </table>
+        </div>
+        <h4><svg id="barcode"></svg></h4>
+        <h2> {{ product.name }}</h2>
+        <table>
+        <tr>
+        
+        <td>{% trans 'Lot controlled' %}:&nbsp;</td>
+        <td>{{ product.lot_controlled }}</td>
+        </tr>
+        <tr>
+        <td>{% trans 'Temp. condition' %}:&nbsp;</td>
+        <td>{{ product.temperature_condition }}</td>
+        </tr>
+        </table>
+        <br>
+        <br>
+    </div>
+    <div class="col-lg-4">
+        <fieldset>
+        <legend>{% trans 'Product Data' %}</legend>
+        <h4><i class="fa fa-truck"></i>&nbsp;&nbsp;<a href="{{ product.supplier.get_absolute_url }}">{{ product.supplier.name }}</a></h4>
+        <h4><i class="fa fa-industry"></i>&nbsp;&nbsp;<a href="{{ product.vendor.get_absolute_url }}">{{ product.vendor.name }}</a></h4>
+        <h5>{{ supplier.rep }}</h5>
+        <h5>{{ supplier.rep_phone }}</h5>
+        {% for email in product.emailaddresses.all %}
+            <h5><i class="fa fa-at"></i>&nbsp;&nbsp;<a href="mailto:{{ email.email }}">{{ email.email }}</a></h5>
+        {% endfor %}
+        {% for phonenumber in supplier.phonenumbers.all %}
+            <h5><i class="fa fa-phone"></i>&nbsp;&nbsp;{{ phonenumber.phone }}</h5>
+        {% endfor %}
+        <table>
+        <td>{% trans 'Unit' %}:&nbsp;</td>
+        <td>{{ product.unit }}</td>
+        </tr>
+        <tr>
+        <td>{% trans 'Base Multiplier' %}:&nbsp;</td>
+        <td>{{ product.base_multiplier }}</td>
+        </tr>
+        <tr>
+        <td>{% trans 'Base Unit' %}:&nbsp;</td>
+        <td>{{ product.base_unit }}</td>
+        </tr>
+        </table>
+        <tr>
+        </fieldset>
+    </div>
+    
+    <script type="text/javascript">
+    $("#barcode").JsBarcode("{{ product.number }}");
+    </script>
+{% endblock %}

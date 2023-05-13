@@ -1,0 +1,84 @@
+{% extends "base/main_section_base_billing.html" %} 
+{% load i18n staticfiles %} {% load humanize %} 
+
+{% block meta_title %} 
+{% trans "Batch worklist detail" %} {{ worklist.id }}
+{% endblock %} 
+
+{% block title %} 
+{% trans "Batch worklist detail" %}
+{% endblock %} 
+
+{% block extra_js %} 
+{% endblock %} 
+
+{% block breadcrumb_menu %}
+<li class="active"><a href="{% url 'worklists_list' %}">{% trans "Batch worklist" %}</a></li>
+<li class="active">{{ worklists.id }}</li>
+{% endblock %} 
+
+{% block main_header %} 
+{% trans "Batch worklist Details" %} 
+{% endblock %} 
+
+{% block main_toolbar %}
+{% endblock %} 
+
+{% block main_inner %}
+<div class="col-lg-4">
+	<div style="margin-top: -20px;">
+		<br>
+		<table>
+			<tr>
+				<td><small>{% trans 'Created at' %}:&nbsp;</small></td>
+				<td><small>{{ worklists.lastmodification }}</small></td>
+			</tr>
+			<tr>
+				<td><small>{% trans 'Created by' %}:&nbsp;</small></td>
+				<td><small>{{ worklists.lastmodifiedby }}</small></td>
+			</tr>
+		</table>
+	</div>
+	<h2>{{ orders.number }}</h2>
+	<table>
+		
+	</table>
+
+	<br> <br>
+</div>
+<div class="col-lg-4">
+	<fieldset>
+		<legend>{% trans 'Batch : ' %}{{ worklists.id }}</legend>
+		<table>
+			
+		</table>
+	</fieldset>
+</div>
+
+<div class="col-md-12">
+<table class="table">
+	<thead>
+		<tr>
+			<td>{% trans 'Order No.' %}</td>
+			<td>{% trans 'Patient Name' %}</td>
+			<td>{% trans 'Test' %}</td>
+		</tr>
+	</thead>
+	{% for wl in worklists.worklist_order.all %}
+	<tr>
+		<td>{{ wl.order.number }}</td>
+		<td>{{ wl.order.patient.name }}</td>
+		<td>{% for ot in wl.worklisttest_worklistorder.all  %} {{ ot.test.name }}, {% endfor %}</td>
+	</tr>
+	{% endfor %}
+</table>
+</div>
+
+
+</div>
+{% endblock %}
+
+{% block main_footer %}
+		<a href="print" target="_blank" class="btn btn-info" role="button">
+	    <span class="fa fa-print"></span>&nbsp;{% trans "Print" %}</a>
+{% endblock %}

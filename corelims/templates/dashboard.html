@@ -1,0 +1,30 @@
+{% extends "base/base.html" %}
+{% load i18n %}
+
+{% block meta_title %}{% trans "Dashboard" %}{% endblock %}
+{% block title %}{% trans "Dashboard" %}{% endblock %}
+
+{% block breadcrumb_menu %}
+<li class="active">{% trans "Dashboard" %}</li>
+{% endblock %}
+
+{% block main %}
+
+<div class="row mtbox">
+            <div class="col-md-2 col-sm-2 col-md-offset-1 box0">
+                <div class="box1" onclick="window.location.assign('{% url 'supplier_list' %}')">
+                    <span class="fa fa-truck"></span>
+                    <h3>{{ suppliercount }}</h3>
+                </div>
+                    <p>{{ suppliercount }} {% trans 'suppliers in your database.' %}</p>
+            </div>
+            <div class="col-md-2 col-sm-2 box0">
+                <div class="box1" onclick="window.location.assign('{% url 'product_list' %}')">
+                    <span class="fa fa-cube"></span>
+                    <h3>{{ productcount }}</h3>
+                </div>
+                    <p>{{ productcount }} {% trans 'products in your database.' %}</p>
+            </div>
+ </div>
+
+{% endblock %}

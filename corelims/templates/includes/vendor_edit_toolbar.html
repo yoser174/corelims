@@ -1,0 +1,20 @@
+{% load i18n %}
+
+    {% if perms.inventory.add_supplier %}
+        <button class="btn btn-default" onclick="location.href=
+                '{% url 'vendor_create' %}'" title="{% trans 'Create Vendor' %}"
+                data-toggle="tooltip" data-placement="top">
+            <span class="glyphicon glyphicon-plus"></span></button>
+    {% endif %}
+    {% if perms.inventory.change_supplier %}
+        <button class="btn btn-info" onclick="location.href=
+                '{% url 'vendor_edit' vendor.pk %}'" title="{% trans 'Edit Vendor' %}"
+                data-toggle="tooltip" data-placement="top">
+            <span class="glyphicon glyphicon-pencil"></span></button>
+    {% endif %}
+    {% if perms.inventory.delete_supplier %}
+        <button class="btn btn-danger" onclick="location.href=
+                '{% url 'vendor_delete' vendor.pk %}'" title="{% trans 'Delete Vendor' %}"
+                data-toggle="tooltip" data-placement="top">
+            <span class="glyphicon glyphicon-trash"></span></button>
+    {% endif %}

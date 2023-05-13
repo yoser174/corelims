@@ -1,0 +1,108 @@
+{% extends "base/main_section_base_billing.html" %} 
+{% load i18n staticfiles %} {% load humanize %} 
+
+{% block meta_title %} 
+{% trans "Patient detail" %} {{ patients.patient_id }}
+{% endblock %} 
+
+{% block title %} 
+{% trans "Patient detail" %}
+{% endblock %} 
+
+{% block extra_js %} 
+{% endblock %} 
+
+{% block breadcrumb_menu %}
+<li class="active"><a href="{% url 'patients_list' %}">{% trans "Patients" %}</a></li>
+<li class="active">{{ patients.patient_id }}</li>
+{% endblock %} 
+
+{% block main_header %} 
+{% trans "Patient Details" %} 
+{% endblock %} 
+
+{% block main_toolbar %}
+<div class="btn-group" role="group">{% include 'includes/billing/patients_edit_toolbar.html' %}</div>
+{% endblock %} 
+
+{% block main_inner %}
+<div class="col-lg-4">
+	<div style="margin-top: -20px;">
+		<br>
+		<table>
+			<tr>
+				<td><small>{% trans 'Created' %}:&nbsp;</small></td>
+				<td><small>{{ patients.dateofcreation }}</small></td>
+			</tr>
+			<tr>
+				<td><small>{% trans 'Last modified' %}:&nbsp;</small></td>
+				<td><small>{{ patients.lastmodification }}</small></td>
+			</tr>
+		</table>
+	</div>
+	<h2>{{ patients.number }}</h2>
+	<table>
+		<tr>
+			<td>{% trans 'Patient ID' %}:&nbsp;</td>
+			<td><b>{{ patients.patient_id }}</b></td>
+		</tr>
+		<tr>
+			<td>{% trans 'Name' %}:&nbsp;</td>
+			<td><b>{{ patients.name }}</b></td>
+		</tr>
+		<tr>
+			<td>{% trans 'Gender' %}:&nbsp;</td>
+			<td><b>{{ patients.gender }}</b></td>
+		</tr>
+		<tr>
+			<td>{% trans 'DOB' %}:&nbsp;</td>
+			<td><b>{{ patients.dob }}</b></td>
+		</tr>
+		<tr>
+			<td>{% trans 'Address' %}:&nbsp;</td>
+			<td><b>{{ patients.address }}</b></td>
+		</tr>
+		<tr>
+			<td>{% trans 'Created / Modified by' %}:&nbsp;</td>
+			<td><b>{{ patients.lastmodifiedby }}</b></td>
+		</tr>
+		<td>{% trans 'Created at' %}:&nbsp;</td>
+		<td><b>{{ patients.dateofcreation }}</b></td>
+		</tr>
+	</table>
+
+	<br> <br>
+</div>
+
+
+<div class="col-lg-4">
+	<fieldset>		
+		<table class="table">
+			<thead>
+			<tr>
+				<td>{% trans "Visit" %}</td>
+				<td>{% trans "Insurance" %}</td>
+				<td>{% trans "Count" %}</td>
+				<td>{% trans "Report" %}</td>
+			</tr>
+		</thead>
+		{% for vs in visit %}
+			<tr>
+				<td>{{ vs.origin__name }}</td>
+				<td>{{ vs.insurance__name }}</td>
+				<td>{{ vs.number__count }}</td>
+				<td><a href="../../bill-report/{{ patients.id }}/?origin_id={{ vs.origin__id }}&insurance_id={{ vs.insurance__id }}" target="_blank" class="btn btn-default" role="button">
+    <span class="fa fa-print"></span></td>
+			</tr>
+		{% endfor %}
+		</table>
+	</fieldset>
+</div>
+{% endblock %}
+
+{% block main_footer %}
+    <a href="../../../orders/patient/create/{{ patients.id }}/" class="btn btn-default" role="button">
+    <span class="glyphicon glyphicon-plus"></span>&nbsp;{% trans "Create new Lab order for this patient" %}</a>
+    <a href="../../../patients/trans_history/{{ patients.id }}/" class="btn btn-default" role="button">
+    <span class="fa fa-print"></span>&nbsp;{% trans "Transaction history" %}</a>
+{% endblock %}

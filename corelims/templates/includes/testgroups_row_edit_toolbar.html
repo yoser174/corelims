@@ -1,0 +1,16 @@
+{% load i18n %}
+
+<div class="btn-group btn-group-sm" role="group">
+    {% if perms.billing.change_testgroups %}
+        <button class="btn btn-info" onclick="location.href=
+        	'{% url 'testgroups_edit' record.pk %}'" title="{% trans 'Edit Test groups' %}"
+                data-toggle="tooltip" data-placement="top">
+            <span class="glyphicon glyphicon-pencil"></span></button>
+    {% endif %}
+    {% if perms.billing.delete_testgroups %}
+        <button class="btn btn-danger" onclick="location.href=
+        	'{% url 'testgroups_delete' record.pk %}'" title="{% trans 'Delete Test groups' %}"
+                data-toggle="tooltip" data-placement="top">
+            <span class="glyphicon glyphicon-trash"></span></button>
+    {% endif %}
+</div>

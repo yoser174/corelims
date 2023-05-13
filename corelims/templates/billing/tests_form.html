@@ -1,0 +1,45 @@
+{% extends "base/form_view_base_billing.html" %}
+{% load i18n bootstrap3 %}
+
+{% block meta_title %}
+    {% trans "Test groups" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Test groups" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active"><a href="{% url 'testgroups_list' %}">{% trans "Test groups" %}</a></li>
+    <li class="active">{% if product %}{% trans "Edit Test group" %}{% else %}{% trans "Create Test group" %}{% endif%}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% if product %}{% trans "Edit Test group" %}{% else %}{% trans "Create Test group" %}{% endif%}
+{% endblock %}
+
+{% block main_toolbar %}
+    <button type='submit' class='btn btn-primary'>
+        {% trans "Save" %}
+    </button>
+
+    <button type="button" class="btn btn-default"
+            onclick="window.location.assign('{% url 'testgroups_list' %}')">
+        {% trans "Cancel" %}
+    </button>
+{% endblock %}
+
+{% block main_inner %}
+    {% bootstrap_form form layout='horizontal' %}
+{% endblock %}
+
+{% block main_footer %}
+    <button type='submit' class='btn btn-primary'>
+        {% trans "Save" %}
+    </button>
+
+    <button type="button" class="btn btn-default"
+            onclick="window.location.assign('{% url 'testgroups_list' %}')">
+        {% trans "Cancel" %}
+    </button>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base/form_view_base.html" %}
+{% load i18n bootstrap3 %}
+
+{% block meta_title %}
+    {% trans "Select storage" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Select storage" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active"><a href="{% url 'usingproduct_list' %}">{% trans "Using product" %}</a></li>
+    <li class="active">{% if storage %}{% trans "Select storage" %}{% else %}{% trans "Select storage" %}{% endif%}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% if storage %}{% trans "Select storage" %}{% else %}{% trans "No storage available?" %}{% endif%}
+{% endblock %}
+
+
+{% block main_inner %}
+<div class="form-group">
+<label class="col-md-3 control-label" for="id_supplier">Storage</label>
+<div class="col-md-9"><select class="form-control" id="id_storage" name="storage" title="" required>
+<option value="" selected="selected">---------</option>
+{% for choice in storage %}
+<option value="{{ choice.id }}">{{ choice.name }}</option>
+{% endfor %}
+</select></div>
+</div>
+{% endblock %}
+
+
+{% block main_footer %}
+    <button type='submit' class='btn btn-primary'>
+        {% trans "Continue" %}
+    </button>
+
+    <button type="button" class="btn btn-default"
+            onclick="window.location.assign('{% url 'usingproduct_list' %}')">
+        {% trans "Cancel" %}
+    </button>
+{% endblock %}

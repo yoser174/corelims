@@ -1,0 +1,257 @@
+{% extends "base/form_view_base_billing.html" %}
+{% load i18n bootstrap3 wa_status %}
+
+{% block meta_title %}
+    {% trans "Order Results" %}
+    {{ orders.number }} {{ orders.patient.name }}
+{% endblock %}
+
+{% block title %}
+    {% trans "Orders" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active"><a href="{% url 'workarea' %}">{% trans "Workarea" %}</a></li>
+    <li class="active">{{ order }}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% if orders %}{% trans "Edit order results" %}{% else %}{% trans "Create order results" %}{% endif%}
+    <br>{{ orders.number }} <br>
+   <!--  <button type="button" class="open-addComment btn btn-default" data-toggle="modal" data-id="{{ sample.id }}" data-target="#addCommentDialog">
+        <span class="fa fa-comment"></span>&nbsp;&nbsp;{% trans "Add order comment" %}</button>
+        <br><br> -->
+        {{ orders.patient.name }}<button type="button" class="open-addComment btn btn-default" data-toggle="modal" data-id="{{ sample.id }}" data-target="#addCommentDialog">
+       <!--  <span class="fa fa-comment"></span>&nbsp;&nbsp;{% trans "Add patient comment" %}</button> -->
+{% endblock %}
+<form method="post">
+{% csrf_token %}
+
+{% block main_toolbar %}
+{% endblock %}
+
+{% block main_inner %}
+<style>
+.form-control-abnormal {
+  color:  red;
+}
+
+.form-control-panic {
+  background-color: red;
+}
+
+
+input[type=checkbox].cb-big {
+	transform: scale(1.5);
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/bootstrap-table.min.js"></script>
+
+<table class="table  table-sm">
+	<thead>
+		<tr>
+			<th><input type="checkbox" name="check_all" tabindex="-1" class="all cb-big" value=""></th>
+			<th>&nbsp;</th>
+			<th>{% trans "Name" %}</th>
+			<th>{% trans "Rerun" %}</th>
+			<th>{% trans "Result" %}</th>
+			<th>{% trans "Unit" %}</th>
+			<th>{% trans "Ref.Range" %}</th>
+			<th>{% trans "Mark" %}</th>
+			<th>{% trans "Tech.Val" %}</th>
+			<th>{% trans "Med.Val" %}</th>
+			<th>{% trans "Pervious 1" %}</th>
+			<th>{% trans "Pervious 2" %}</th>
+			<th>{% trans "Pervious 3" %}</th>
+		</tr>
+	</thead>
+	
+	<tbody>
+    {% for o in ordertests %}
+	    <tr><td>
+	    <input type="checkbox" name="check_{{ o.test_id }}" tabindex="-1" value="" class="cb-big"></td>
+	    	{% if o.is_header %}
+	    	<td></td>
+	    	<td colspan="2"><strong>{{ o.test__name }}</strong></td>
+	    	{% else %}
+	     	<td>	
+	     	<div class='progress progress-striped'>
+	     		{% if o.validation_status == 0 %}
+                	<div class="progress-bar progress-bar-danger" role="progressbar" style="width: 0%;">
+                {% endif %}
+                {% if o.validation_status == 1 %}
+                	<div class="progress-bar progress-bar-danger" role="progressbar" style="width: 25%;">
+                {% endif %}
+                {% if o.validation_status == 2 %}
+                	<div class="progress-bar progress-bar-warning" role="progressbar" style="width: 50%;">
+                {% endif %}
+                {% if o.validation_status == 3 %}
+                	<div class="progress-bar progress-bar-success" role="progressbar" style="width: 75%;">
+                {% endif %}
+                {% if o.validation_status == 4 %}
+                	<div class="progress-bar progress-bar-info" role="progressbar" style="width: 100%;">
+                {% endif %}
+                &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</div>
+            </div>
+			</td>
+	     	<td><a href="#" data-id="{{ o.test_id }}" class="viewdetails">{{ o.test__name }}</a></td>
+	     	
+	     	{% endif %}
+	     	{% if not o.is_header %}
+	     	<td>{{ orders.id | pervious_rerun:o.test_id }}</td>	    	     	
+	     	{% if  o.test__result_type  == 'ALF' %}<td><input type="text" name="test_{{ o.test_id }}" class="form-control form-control-ok"   value="{{ o.result__alfa_result|default:"" }}" />{% endif %}
+	     	{% if  o.test__result_type  == 'NUM' %}<td><input type="text" name="test_{{ o.test_id }}" class="form-control {% if o.patologi_mark == 'LL' or o.patologi_mark == 'HH' %} form-control-panic {% endif %} {% if o.patologi_mark == 'L' or o.patologi_mark == 'H' %} form-control-abnormal {% endif %}" value="{{ o.result__alfa_result|default:"" }}" />    	
+	     	</td>
+	     	<td>{{ o.unit|default:"" }}</td>
+	     	<td>{{ o.ref_range|default:"" }}</td>
+	     	<td>{{ o.patologi_mark|default:"" }}</td>	
+	     	{% endif %}
+	     	{% if o.test__result_type  == 'TXT' %}
+	     	<td colspan="4"><textarea name="test_{{ o.test_id }}"  class="form-control rounded-0" id="exampleFormControlTextarea1" rows="3">{{ o.result__alfa_result|default:"" }}</textarea></td>
+	     	{% endif %}
+	     	<td>{{ o.techval_user|default:"" }}</td>
+	     	<td>{{ o.medval_user|default:"" }}</td>
+	     	<td>{{ orders.id | pervious_result_1:o.test_id }}</td>
+	     	<td>{{ orders.id | pervious_result_2:o.test_id }}</td>
+	     	<td>{{ orders.id | pervious_result_3:o.test_id }}</td>
+	     	
+	     	{% endif %}
+	     	
+	     	
+	     </tr> 
+    {% endfor %}
+    <tr>
+    	<td colspan="13">
+    	<div class="form-group">
+    	<input type="checkbox" name="check_conclusion" tabindex="-1" value="" class="cb-big">
+  <label for="conclusion">{% trans "Conclusion:" %}</label>
+  <textarea class="form-control" rows="5" id="conclusion" name="conclusion">{{ orders.conclusion|default:"" }}</textarea>
+</div>
+    	</td>
+    </tr>
+    </tbody>
+</table>
+
+ <!-- Modal -->
+  <div class="modal fade" id="ModalDetails" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">{% trans "All pervious results" %}</h4>
+        </div>
+        <div class="modal-body">
+  
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+
+{% endblock %}
+
+{% block main_footer %}
+    <button type='submit' class='btn btn-primary' name="save">
+    <span class="fa fa-save"></span>&nbsp;
+        {% trans "Save" %}
+    </button>
+
+    <button type="button" class="btn btn-default"
+            onclick="window.location.assign('{% url 'workarea' %}')">
+            <span class="fa fa-window-close"></span>&nbsp;
+        {% trans "Cancel" %}
+    </button>
+    
+    {% if perms.corelism.techval %}
+    <button type='submit' class="btn btn-default" name="techval" role="button">
+    <span class="fa fa-check"></span>&nbsp;{% trans "Technical Validate" %}
+    </button>
+    {% endif %}
+    
+    {% if perms.corelism.mdeval %}
+    <button type='submit' class="btn btn-default" name="medval" role="button">
+    <span class="fa fa-check"></span>&nbsp;{% trans "Medical Validate" %}
+    </button>
+    {% endif %}
+    
+    {% if perms.corelism.repeat %}
+    <button type='submit' class="btn btn-default" name="repeat" role="button">
+    <span class="fa fa-redo"></span>&nbsp;{% trans "Repeat" %}
+    </button>
+    {% endif %}
+    
+    {% if perms.corelism.delete_ordertests %}
+    <button type='submit' class="btn btn-default" name="delete" role="button">
+    <span class="fa fa-times"></span>&nbsp;{% trans "Delete" %}
+    </button>
+    {% endif %}
+    
+    <div class="btn-group dropup">
+	    <button type="button dropup" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+	    <span class="fa fa-print"></span>&nbsp;
+	      {% trans "Print Result" %}
+	      <span class="caret"></span>
+	    </button>
+	    <ul class="dropdown-menu">
+	    <li><a href="print/" target="_blank">{% trans "All" %}</a></li>
+	    <li role="separator" class="divider"></li>
+	    {% for tg in testgroup %}
+	      <li><a href="print/?group_id={{ tg.test__test_group }}" target="_blank">{{ tg.test__test_group__name }}</a></li>
+	     {% endfor %}
+	    </ul>
+	</div>
+    
+    <a href="history" class="btn btn-default" role="button">
+    <span class="fa fa-clock"></span>&nbsp;{% trans "History" %}</a>
+    
+    
+   
+    
+    </form>
+    
+ <script type="text/javascript">
+ (function($) {
+    var infoModal = $('#ModalDetails');
+    $('.viewdetails').on('click', function(){
+        $.ajax({ 
+          type: "GET", 
+          url: '/json/pervious_results/{{ order.id }}/'+$(this).data('id')+'/',
+          dataType: 'json',
+          success: function(data){ 
+            htmlData = '<table class="table"><thead><tr><th>Date</th><th>Order number</th><th>Result</th></tr></thead><tbody>';
+           for (var i = 0; i < data.results.length; i++) {
+                    console.log(data.results[i].id);
+                    htmlData = htmlData + '<tr><td>'+data.results[i].order__order_date+'</td><td>'+data.results[i].order__number+'</td><td>'+data.results[i].result__alfa_result+'</td></tr>';
+                }   
+                 
+            infoModal.find('.modal-body').html(htmlData+'</tbody></table>');
+            infoModal.modal('show');
+          }
+        });
+
+        return false;
+    });
+})(jQuery);
+   $('.all').on('click', function(e){
+    $this = this;
+    $.each($(this).parents('table').find('input'), function(i, item){
+      $(item).prop('checked', $this.checked);
+    });
+  });
+   
+   var input = document.getElementById("myInput");
+   input.addEventListener("keyup", function(event) {
+     if (event.keyCode === 13) {
+      event.preventDefault();
+      document.getElementById("myBtn").click();
+     }
+   });
+</script>
+{% endblock %}

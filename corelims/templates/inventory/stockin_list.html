@@ -1,0 +1,72 @@
+{% extends "base/table_view_base.html" %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+{% block meta_title %}
+    {% trans "Stock in" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Stock in" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active">{% trans "Stock in" %}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Stock in" %}
+{% endblock %}
+
+{% block main_toolbar %}
+    {% if perms.crm_core.add_stockin %}
+        <button class="btn btn-success" onclick="location.href='{% url 'stockin_create' %}'"
+                title="{% trans 'Add stock in' %}" data-toggle="tooltip" data-placement="top">
+            <span class="glyphicon glyphicon-plus"></span></button>
+    {% endif %}
+{% endblock %}
+
+ 	{% block extra_css %}
+ 	<link href="{% static "assets/css/datetimepicker.css" %}" type="text/css" media="all" rel="stylesheet" />
+ 	{{ form.media.css }}
+    {% endblock %}
+    
+    {% block extra_js %}
+    <script type="text/javascript" src="{% static "assets/js/bootstrap-datetimepicker.js" %}"></script>
+    <script type="text/javascript" src="{% static "assets/js/locales/bootstrap-datetimepicker.id.js" %}"></script>
+    {{ form.media.js }}
+    {% endblock %}
+
+
+
+
+{% block main_inner %}
+
+<form method="get">
+    <div class="well">
+      <h4 style="margin-top: 0"><a href='{{ request.path }}' >Clear</a></h4>
+      <div class="row">		
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.date_in.label_tag }}
+          {% render_field filter.form.date_in class="form-control" %}
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                $('#id_date_in').datetimepicker({minView: 2,autoclose: true,language: 'id',startView: 2,format: 'dd-mm-yyyy'});
+            });
+        </script>
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.product.label_tag }}
+          {% render_field filter.form.product class="form-control" %}
+        </div>
+       </div>
+      <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-search"></span> Search
+      </button>
+       
+    </div>
+  </form>
+    {% render_table stockintable "tables2/bootstrapped-tables2.html" %}
+{% endblock %}

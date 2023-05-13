@@ -1,0 +1,49 @@
+{% extends "base/table_view_base_billing.html" %}
+{% load render_table from django_tables2 %}
+{% load  i18n bootstrap3 %}
+{% load widget_tweaks static %}
+
+{% block meta_title %}
+    {% trans "Instrument batch samples for " %}[{{ instrument }}]
+{% endblock %}
+
+{% block title %}
+    {% trans "Instrument batch samples for " %}[{{ instrument }}]
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li><a href="{% url 'instrument_batch' %}">{% trans "Instrument Batch" %}</a></li>
+    <li class="active">{% trans "List samples" %}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "List batch samples > " %}[{{ instrument }}]
+{% endblock %}
+
+{% block main_toolbar %}
+{% endblock %}
+
+{% block extra_css %}
+ <link rel="stylesheet" href="{% static "assets/css/daterangepicker.css" %}">
+{% endblock %}
+
+{% block extra_js %}
+
+<script src="{% static "assets/js/moment.min.js" %}"></script>
+<script src="{% static "assets/js/daterangepicker.js" %}"></script>
+{% endblock %}
+
+
+{% block main_inner %}
+
+<form action="add" method="post">
+{% csrf_token %}
+  <div class="form-group">
+    <label for="orderno">{% trans "Sample Number" %}</label>
+    <input type="text" class="form-control" id="sampleno" name="sampleno" autofocus>
+  </div>
+  <button type="submit" name="addsample" class="btn btn-default">{% trans "Add" %}</button>
+</form>
+
+{% render_table instsampletable "tables2/bootstrapped-tables2.html" %}
+{% endblock %}

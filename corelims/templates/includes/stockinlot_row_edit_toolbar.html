@@ -1,0 +1,10 @@
+{% load i18n %}
+
+<div class="btn-group btn-group-sm" role="group">
+    {% if perms.inventory.change_stockin %}
+        <button class="btn btn-info" onclick="location.href=
+                '{% url 'stockin_lot' record.pk %}'" title="{% trans 'Edit Lot' %}"
+                data-toggle="tooltip" data-placement="top">
+            <span class="fa fa-hourglass-end"></span></button>
+    {% endif %}
+</div>

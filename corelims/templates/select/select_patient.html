@@ -1,0 +1,53 @@
+{% extends "base/table_view_base_billing.html" %}
+{% load render_table from django_tables2 %}
+{% load  i18n bootstrap3 %}
+{% load widget_tweaks %}
+
+{% block meta_title %}
+    {% trans "Select patient" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Select patient" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active"><a href="{% url 'orders_list' %}">{% trans "Orders" %}</a></li>
+    <li class="active">{% if patient %}{% trans "Select patient" %}{% else %}{% trans "Select patient" %}{% endif%}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Select patient" %}
+{% endblock %}
+
+{% block main_toolbar %}
+    {% if perms.bbconnlab.add_patients %}
+        <button class="btn btn-success" onclick="location.href='{% url 'order_add_patient' %}'"
+                title="{% trans 'Create Patient' %}" data-toggle="tooltip" data-placement="top">
+            <span class="glyphicon glyphicon-plus"></span></button>
+    {% endif %}
+{% endblock %}
+
+
+{% block main_inner %}
+<form method="get">
+<div class="well">
+<h4 style="margin-top: 0"><a href='/billing/orders/patient/' >Clear</a></h4>
+      <div class="row">
+      <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.patient_id.label_tag }}
+          {% render_field filter.form.patient_id class="form-control" %}
+        </div>
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.name.label_tag }}
+          {% render_field filter.form.name class="form-control" %}
+        </div>
+        
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-search"></span> Search
+      </button>
+      </div>
+  </form>
+{% render_table patienttable "tables2/bootstrapped-tables2.html" %}
+{% endblock %}

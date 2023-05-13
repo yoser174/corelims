@@ -1,0 +1,38 @@
+{% load i18n %}
+
+<div class="btn-group btn-group-sm" role="group">
+  {% if perms.corelism.view_orders %}
+  <button
+    class="btn btn-default"
+    onclick="location.href=
+                '{% url 'order_detail' record.pk %}'"
+    title="{% trans 'Order detail' %}"
+    data-toggle="tooltip"
+    data-placement="top"
+  >
+    <span class="glyphicon glyphicon-search"></span>
+  </button>
+  {% endif %} {% if perms.corelism.change_orders %}
+  <button
+    class="btn btn-info"
+    onclick="location.href=
+        	'{% url 'order_edit' record.pk %}'"
+    title="{% trans 'Edit order' %}"
+    data-toggle="tooltip"
+    data-placement="top"
+  >
+    <span class="glyphicon glyphicon-pencil"></span>
+  </button>
+  {% endif %} {% if perms.corelism.delete_orders and not record.has_tests %}
+  <button
+    class="btn btn-danger"
+    onclick="location.href=
+                '{% url 'order_delete' record.pk %}'"
+    title="{% trans 'Delete order' %}"
+    data-toggle="tooltip"
+    data-placement="top"
+  >
+    <span class="glyphicon glyphicon-trash"></span>
+  </button>
+  {% endif %}
+</div>

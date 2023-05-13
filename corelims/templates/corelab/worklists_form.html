@@ -1,0 +1,56 @@
+{% extends "base/form_view_base_billing.html" %}
+{% load i18n bootstrap3 %}
+
+{% block meta_title %}
+    {% trans "Worklists" %}
+    {{ worklists.id }}
+{% endblock %}
+
+{% block title %}
+    {% trans "Orders" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active"><a href="{% url 'worklists_list' %}">{% trans "Worklists" %}</a></li>
+    <li class="active">{% if orders %}{% trans "Edit batch" %}{% else %}{% trans "Create batch" %}{% endif%} </li>
+{% endblock %}
+
+{% block main_header %}
+    {% if orders %}{% trans "Edit order" %}{% else %}{% trans "Create order" %}{% endif%}
+    <br>{{ orders.number }} <br>{{ orders.patient.name }}
+{% endblock %}
+
+{% block main_toolbar %}
+    <button type='submit' class='btn btn-primary'>
+        {% trans "Save" %}
+    </button>
+
+    <button type="button" class="btn btn-default"
+            onclick="window.location.assign('{% url 'orders_list' %}')">
+        {% trans "Cancel" %}
+    </button>
+{% endblock %}
+
+{% block extra_css %}
+{{ form.media.css }}
+{% endblock %}
+    
+{% block extra_js %}
+{{ form.media.js }}
+{% endblock %}
+    
+
+{% block main_inner %}
+    {% bootstrap_form form layout='horizontal' %}
+{% endblock %}
+
+{% block main_footer %}
+    <button type='submit' class='btn btn-primary'>
+        {% trans "Save" %}
+    </button>
+
+    <button type="button" class="btn btn-default"
+            onclick="window.location.assign('{% url 'orders_list' %}')">
+        {% trans "Cancel" %}
+    </button>
+{% endblock %}

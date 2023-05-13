@@ -1,0 +1,178 @@
+{% extends "base/table_view_base_billing.html" %}
+{% load render_table querystring  from django_tables2 %}
+{% load  i18n bootstrap3  %}
+{% load widget_tweaks static %}
+
+{% block meta_title %}
+    {% trans "Order tests report" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Order tests report" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Order tests report" %}
+{% endblock %}
+
+{% block main_toolbar %}
+    {% if perms.billing.view_orders %}
+        
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+ <link rel="stylesheet" href="{% static "assets/css/daterangepicker.css" %}">
+ <style>
+ .row {
+    margin-top: 10px;
+}
+
+.panel-tabs {
+    position: relative;
+    bottom: 30px;
+    clear:both;
+    border-bottom: 1px solid transparent;
+}
+
+.panel-tabs > li {
+    float: left;
+    margin-bottom: -1px;
+}
+
+.panel-tabs > li > a {
+    margin-right: 2px;
+    margin-top: 4px;
+    line-height: .85;
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+    color: #FFFFFF;
+}
+
+.panel-tabs > li > a:hover {
+    border-color: transparent;
+    color: #FFFFFF;
+    background-color: transparent;
+}
+
+.panel-primary>.panel-heading {
+    color: #FFFFFF;
+    background-color: #000000;
+    border-color: #000000;
+}
+
+.panel-primary {
+    border-color: #000000;
+}
+
+.panel-tabs > li.active > a,
+.panel-tabs > li.active > a:hover,
+.panel-tabs > li.active > a:focus {
+    color: #FFFFFF;
+    cursor: default;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    background-color: rgba(255,255,255, .23);
+    border-bottom-color: transparent;
+}
+
+.tab-pane{
+    width:1000px;
+    height:1000px;
+    
+}
+.tab-content{
+  overflow-x:scroll;
+}
+</style>
+{% endblock %}
+    
+{% block extra_js %}
+<script src="{% static "assets/js/jquery-1.12.3.min.js" %}"></script>
+<script src="{% static "assets/js/moment.min.js" %}"></script>
+<script src="{% static "assets/js/daterangepicker.js" %}"></script>
+{% endblock %}
+
+
+
+{% block main_inner %}
+
+<div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <i class="more-less glyphicon glyphicon-filter"></i>
+                        Filter
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+
+ 
+<form method="get">
+<div class="well">
+<h4 style="margin-top: 0"><a href="{% url 'jm_list' %}" >Clear</a></h4>
+      <div class="row">
+      <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.order_date.label_tag }}
+          {% render_field filter.form.order_date class="form-control" %}
+        </div>
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.name.label_tag }}
+          {% render_field filter.form.name class="form-control" %}
+        </div>
+        
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-search"></span> Search
+      </button>
+      </div>
+  </form>
+  
+  
+</div>
+            </div>
+        </div>
+  
+ <script type="text/javascript">
+ $('input[name="order_date"]').daterangepicker({locale: {
+      format: 'YYYY-MM-DD'
+    }});
+ $('#daterange').on('apply.daterangepicker', function(ev, picker) {
+  console.log(picker.startDate.format('YYYY-MM-DD'));
+  console.log(picker.endDate.format('YYYY-MM-DD'));
+});
+ </script>
+ 
+ 
+ 
+        <div class="panel panel-primary">
+            <div class="panel-heading clearfix">
+                <h3 class="panel-title">{% trans "Export format: " %}</h3>
+                <div class="input-group">
+                    
+                    <div class="input-group-btn">
+                    {% if report %}
+                    	<a href="{% querystring 'export'='xlsx' %}" target="_blank" id="code" type="submit" class="btn btn-success" title="{% trans 'Export to xlsx' %}"><span class="fa fa-file-excel-o"></span>&nbsp;XSLS</a>
+                    	<a href="{% querystring 'export'='pdf' %}" target="_blank" id="code" type="submit" class="btn btn-success" title="{% trans 'Export to pdf' %}"><span class="fa fa-file-pdf-o"></span>&nbsp;PDF</a>
+                    	<a href="{% querystring 'export'='docx' %}" target="_blank" id="code" type="submit" class="btn btn-success" title="{% trans 'Export to docx' %}"><span class="fa fa-file-word-o"></span>&nbsp;DOCX</a>
+                     {% endif %}
+                    </div>
+                </div>
+            </div>            
+            <div class="panel-body">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="test">
+                       {{ report| safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+{% endblock %}

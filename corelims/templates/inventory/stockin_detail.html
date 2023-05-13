@@ -1,0 +1,104 @@
+{% extends "base/main_section_base.html" %}
+{% load i18n staticfiles  %}
+
+{% block meta_title %}
+    {% trans "Stock in" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Stock in" %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static "assets/js/JsBarcode.all.min.js" %}"></script>
+
+
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active"><a href="{% url 'stockin_list' %}">{% trans "Stock in" %}</a></li>
+    <li class="active">{{ stockin.product }}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Stockin Details" %}
+{% endblock %}
+
+{% block main_toolbar %}
+    <div class="btn-group" role="group">
+        {% include 'includes/stockin_edit_toolbar.html' %}
+    </div>
+{% endblock %}
+
+{% block main_inner %}
+    <div class="col-lg-4">
+        <div style="margin-top: -20px;">
+            <br>
+            <table>
+                <tr>
+                    <td><small>{% trans 'Created' %}:&nbsp;</small></td>
+                    <td><small>{{ stockin.dateofcreation }}</small></td>
+                </tr>
+                <tr>
+                    <td><small>{% trans 'Last modified' %}:&nbsp;</small></td>
+                    <td><small>{{ stockin.lastmodification }}</small></td>
+                </tr>
+            </table>
+        </div>
+        <h4><svg id="barcode"></svg></h4>
+        <h2> {{ stockin.product.name }}</h2>
+        <table>
+         <tr>
+        <td>{% trans 'Received Quantity' %}:&nbsp;</td>
+        <td><h2><b>{{ stockin.quantity }}&nbsp;{{ stockin.unit }}</b></h2></td>
+        </tr>
+        <tr>
+        <td>{% trans 'Created / Modified by' %}:&nbsp;</td>
+        <td><b>{{ stockin.lastmodifiedby }}</b></td>
+        </tr>
+        <td>{% trans 'Created at' %}:&nbsp;</td>
+        <td><b>{{ stockin.dateofcreation }}</b></td>
+        </tr>
+        </table>
+        <br>
+        <br>
+    </div>
+    <div class="col-lg-4">
+        <fieldset>
+        <legend>{% trans 'Product Data' %}</legend>
+        <h4><i class="fa fa-truck"></i>&nbsp;&nbsp;<a href="{{ stockin.product.supplier.get_absolute_url }}">{{ stockin.product.supplier.name }}</a></h4>
+        <h4><i class="fa fa-industry"></i>&nbsp;&nbsp;<a href="{{ stockin.product.vendor.get_absolute_url }}">{{ stockin.product.vendor.name }}</a></h4>
+        <h5>{{ supplier.rep }}</h5>
+        <h5>{{ supplier.rep_phone }}</h5>
+        {% for email in stockin.emailaddresses.all %}
+            <h5><i class="fa fa-at"></i>&nbsp;&nbsp;<a href="mailto:{{ email.email }}">{{ email.email }}</a></h5>
+        {% endfor %}
+        {% for phonenumber in supplier.phonenumbers.all %}
+            <h5><i class="fa fa-phone"></i>&nbsp;&nbsp;{{ phonenumber.phone }}</h5>
+        {% endfor %}
+        </fieldset>
+                {% if stockin.product.lot_controlled %}
+        <div class="panel-body well">
+        <div style="margin-top: -20px;">
+        <table>
+        <tr>
+        <td>{% trans 'Lot Number' %}:&nbsp;</td>
+        <td><b>{{ stockin.stockin_lot.number }}</b></td>
+        </tr>
+        <tr>
+        <td>{% trans 'Expired' %}:&nbsp;</td>
+        <td><b>{{ stockin.stockin_lot.expired }}</b></td>
+        </tr>
+        </table>
+        </div>
+        </div>
+        
+        {% endif %}
+    </div>
+    
+    
+    
+    <script type="text/javascript">
+    $("#barcode").JsBarcode("{{ stockin.product.number }}");
+    </script>
+{% endblock %}

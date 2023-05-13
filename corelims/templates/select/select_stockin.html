@@ -1,0 +1,25 @@
+{% extends "base/table_view_base.html" %}
+{% load render_table from django_tables2 %}
+{% load  i18n bootstrap3 %}
+
+{% block meta_title %}
+    {% trans "Select using product" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Select using product" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active"><a href="{% url 'returningproduct_list' %}">{% trans "Returning product" %}</a></li>
+    <li class="active">{% if usingproduct %}{% trans "Select Using product" %}{% else %}{% trans "Select using product" %}{% endif%}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Select using product" %}
+{% endblock %}
+
+
+{% block main_inner %}
+{% render_table stockintable "tables2/bootstrapped-tables2.html" %}
+{% endblock %}

@@ -1,0 +1,23 @@
+django == 1.11
+djangorestframework == 3.9
+mysqlclient
+django-bootstrap3==11.0.0
+django-avatar==4.1.0
+django-extensions==2.2.5
+num2words
+python-dateutil
+django-tables2==2.5.3
+django-datetime-widget
+django-crispy-forms
+django-select2==6.2.0
+django-filter==2.1.0
+requests
+django-braces==1.14.0
+django-extra-views==0.13.0
+tablib
+pyserial
+pyreportjasper==1.0.2
+django-fontawesome-5==1.0.16
+django-jquery
+django-widget-tweaks==1.4.5
+django-autocomplete-light==3.2.10

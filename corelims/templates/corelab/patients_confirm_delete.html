@@ -1,0 +1,40 @@
+{% extends "base/main_section_base_billing.html" %}
+{% load i18n bootstrap3 %}
+
+{% block meta_title %}
+    {% trans "Patient deletion" %}
+    {{ patients.number }}
+{% endblock %}
+
+{% block title %}
+    {% trans "Patient deletion" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active"><a href="{% url 'patients_list' %}">{% trans "Patients" %}</a></li>
+    <li class="active">{% trans "Delete patient" %}</li> 
+{% endblock %}
+
+{% block main_header %}
+        {% trans "Delete patient" %} {{ patients.number }}
+{% endblock %}
+
+{% block main_inner %}
+    <form action = ""  method = "post">
+        {% csrf_token %}
+
+        <h3 class = ''>
+            {% trans "Are you you sure you want to delete the following patient ?" %}<br>{{object}}
+            <br>{% trans "(This action can not rollback, we will delete all from database.)" %}
+        </h3>
+
+        <button type='submit' class='btn btn-danger'>
+            {% trans "Delete" %}
+        </button>
+
+        <button type="button" class="btn btn-default"
+                onclick="window.location.assign('{% url 'patients_list' %}')">
+            {% trans "Cancel" %}
+        </button>
+    </form>
+{% endblock %}

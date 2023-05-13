@@ -1,0 +1,158 @@
+{% extends "base/form_view_base_billing.html" %}
+{% load i18n bootstrap3 %}
+
+{% block meta_title %}
+    {% trans "Orders" %}
+    {{ orders.number }} {{ orders.patient.name }}
+{% endblock %}
+
+{% block title %}
+    {% trans "Orders" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active"><a href="{% url 'orders_list' %}">{% trans "Orders" %}</a></li>
+    <li class="active">{% if orders %}{% trans "Edit Order" %}{% else %}{% trans "Create Order" %}{% endif%} </li>
+{% endblock %}
+
+{% block main_header %}
+    {% if orders %}{% trans "Edit order" %}{% else %}{% trans "Create order" %}{% endif%}
+    <br>{{ orders.number }} <br>{{ orders.patient.name }}
+{% endblock %}
+
+{% block main_toolbar %}
+    <button type='submit' class='btn btn-primary'>
+        {% trans "Save" %}
+    </button>
+
+    <button type="button" class="btn btn-default"
+            onclick="window.location.assign('{% url 'orders_list' %}')">
+        {% trans "Cancel" %}
+    </button>
+{% endblock %}
+
+{% block extra_css %}
+<link href="/static/css/select2.min.css" type="text/css" media="screen" rel="stylesheet" />
+<style>
+input[type=checkbox].cb-big {
+	transform: scale(1.5);
+	}
+</style>
+{% endblock %}
+    
+{% block extra_js %}
+<script type="text/javascript" src="/static/js/select2.min.js"></script>
+<script type="text/javascript" src="/static/js/locales/id.js"></script>
+<script type="text/javascript" src="/static/django_select2/django_select2.js"></script>
+<script>
+    $(function () {
+        $("[data-toggle='tooltip']").tooltip();
+    });
+</script>
+{% endblock %}
+    
+
+{% block main_inner %}
+
+{% for field in form.visible_fields %}
+{% if field.name != 'test_selections' and field.name != 'profile_selections' %}
+<div class="form-group">
+	<label class="col-md-3 control-label" for="id_{{ field.name }}">{{ field.label_tag }}</label>
+		<div class="col-md-9">
+		<!--   <input type="text" name="number" value="9212270001" title="" id="id_number" readonly="" maxlength="100" placeholder="Number" class="form-control"> -->
+		{{ field }}
+	</div>
+</div>
+{% endif %}
+{% endfor %}
+
+
+<div class="panel with-nav-tabs panel-default">
+ 			<!--  Profile with tests -->
+				<div class="panel-heading">
+                        <ul class="nav nav-tabs">
+                            <li><a href="#tab_profile" data-toggle="tab">{% trans "Profile" %}</a></li>
+                        </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="tab-content">
+                            <div class="tab-pane fade" id="tab_profile">  
+                            
+                                 
+                            {% for p in profile %}
+            
+
+								<div class="col-md-3">
+                				<div class="form-group">
+								<label for="id_panel_selections_0_{{ p.id }}">
+								<input type="checkbox" name="profile_selections" value="{{ p.id }}" id="id_profile_selections_0_{{ p.id }}"  data-html="true" data-toggle='tooltip' data-placement='right' data-original-title="{{ p.get_tests }}" class="cb-big" 
+								
+								{% for ps in profile_selections %}
+									{% if ps == p.id %}
+									checked
+									{% endif %}
+								{% endfor %}
+								
+								>&emsp;{{ p.name }}</label>
+								</div>
+								</div>
+            
+
+                            {% endfor %}
+                            </div>
+                    </div>
+                </div>
+                
+                <!--  Test group with tests -->
+                <div class="panel-heading">
+                        <ul class="nav nav-tabs">
+                            {% for tg in test_group %}
+                            <li><a href="#tab{{ tg.id }}" data-toggle="tab">{{ tg.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="tab-content">
+                        {% for tg in test_group %}
+                            <div class="tab-pane fade" id="tab{{ tg.id }}">  
+                            
+                                 
+                            {% for t in test %}
+                            	{% if t.test_group_id == tg.id %}
+
+								<div class="col-md-3">
+                				<div class="form-group">
+								<label for="id_test_selections_0_{{ t.id }}">
+								<input type="checkbox" name="test_selections" value="{{ t.id }}" id="id_test_selections_0_{{ t.id }}" class="cb-big" data-toggle='tooltip' data-placement='right' data-original-title="({{ t.id }}) {{ t.name }}" 
+								
+								{% for ts in test_selections %}
+									{% if ts == t.id %}
+									checked
+									{% endif %}
+								{% endfor %}
+								
+								>&emsp;{{ t.name }}</label>
+								</div>
+								</div>
+            
+                            	{% endif %}
+                            {% endfor %}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+  
+{% endblock %}
+
+{% block main_footer %}
+    <button type='submit' class='btn btn-primary'>
+        {% trans "Save" %}
+    </button>
+
+    <button type="button" class="btn btn-default"
+            onclick="window.location.assign('{% url 'orders_list' %}')">
+        {% trans "Cancel" %}
+    </button>
+{% endblock %}

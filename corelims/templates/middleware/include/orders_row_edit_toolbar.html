@@ -1,0 +1,16 @@
+{% load i18n %}
+
+<div class="btn-group btn-group-sm" role="group">
+  {{ order }} {% if perms.corelism.change_orders %}
+  <button
+    class="btn btn-info"
+    onclick="location.href=
+        	'{% url 'order_results' record.pk %}'"
+    title="{% trans 'View/Edit Result' %}"
+    data-toggle="tooltip"
+    data-placement="top"
+  >
+    <span class="glyphicon glyphicon-pencil"></span>
+  </button>
+  {% endif %}
+</div>

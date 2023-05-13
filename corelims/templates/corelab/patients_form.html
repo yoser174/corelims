@@ -1,0 +1,68 @@
+{% extends "base/form_view_base_billing.html" %}
+{% load i18n bootstrap3 static %}
+
+{% block extra_css %}
+{{ form.media.css }}
+{% endblock %}
+    
+{% block extra_js %}
+{{ form.media.js }}
+<script type="text/javascript" src="{% static "django_select2/django_select2.js" %}"></script>
+{% endblock %}
+
+{% block meta_title %}
+    {% trans "Patient" %}
+    {{ patients.patient_id }} {{ patients.name }}
+{% endblock %}
+
+{% block title %}
+    {% trans "Patients" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active"><a href="{% url 'patients_list' %}">{% trans "Patients" %}</a></li>
+    <li class="active">{% if patients %}{% trans "Edit Patient" %}{% else %}{% trans "Create Patient" %}{% endif%} </li>
+{% endblock %}
+
+{% block main_header %}
+    {% if patients %}{% trans "Edit patient" %}{% else %}{% trans "Create patient" %}{% endif%}
+    <br>{{ patients.patient_id }} <br>{{ patients.name }}
+{% endblock %}
+
+{% block main_toolbar %}
+    <button type='submit' class='btn btn-primary'>
+        {% trans "Save" %}
+    </button>
+
+    <button type="button" class="btn btn-default"
+            onclick="window.location.assign('{% url 'patients_list' %}')">
+        {% trans "Cancel" %}
+    </button>
+{% endblock %}
+
+{% block main_inner %}
+    {% bootstrap_form form layout='horizontal' %}
+{% endblock %}
+
+{% block main_footer %}
+    <button type='submit' class='btn btn-primary'>
+        {% trans "Save" %}
+    </button>
+
+    <button type="button" class="btn btn-default"
+            onclick="window.location.assign('{% url 'patients_list' %}')">
+        {% trans "Cancel" %}
+    </button>
+{% endblock %}
+
+{% block extrascript %}
+<script type="text/javascript">
+// Age calculation
+$("#id_age").on("input", function () {
+
+	var year = (new Date()).getFullYear();
+	var age = Number(this.value);
+	$('#id_dob').val("01-01-"+(year-age)).trigger("change");
+});
+</script>
+{% endblock %}

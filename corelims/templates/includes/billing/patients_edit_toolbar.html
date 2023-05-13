@@ -1,0 +1,23 @@
+{% load i18n %} {% if perms.corelism.add_patients %}
+<button
+  class="btn btn-default"
+  onclick="location.href=
+                '{% url 'patient_create' %}'"
+  title="{% trans 'Register new patient' %}"
+  data-toggle="tooltip"
+  data-placement="top"
+>
+  <span class="glyphicon glyphicon-plus"></span>
+</button>
+{% endif %} {% if perms.corelism.change_patients %}
+<button
+  class="btn btn-info"
+  onclick="location.href=
+                '{% url 'patient_edit' patients.pk %}'"
+  title="{% trans 'Edit patient' %}"
+  data-toggle="tooltip"
+  data-placement="top"
+>
+  <span class="glyphicon glyphicon-pencil"></span>
+</button>
+{% endif %}

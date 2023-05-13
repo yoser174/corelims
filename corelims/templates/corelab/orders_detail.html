@@ -1,0 +1,198 @@
+{% extends "base/main_section_base_billing.html" %} 
+{% load i18n staticfiles %} {% load humanize %} 
+
+{% block meta_title %} 
+{% trans "Order detail" %} {{ orders.number }}
+{% endblock %} 
+
+{% block title %} 
+{% trans "Order detail" %}
+{% endblock %} 
+
+{% block extra_js %} 
+{% endblock %} 
+
+{% block breadcrumb_menu %}
+<li class="active"><a href="{% url 'orders_list' %}">{% trans "Orders" %}</a></li>
+<li class="active">{{ orders.number }}</li>
+{% endblock %} 
+
+{% block main_header %} 
+{% trans "Order Details" %} 
+{% endblock %} 
+
+{% block main_toolbar %}
+<div class="btn-group" role="group">{% include 'includes/billing/orders_edit_toolbar.html' %}</div>
+{% endblock %} 
+
+{% block main_inner %}
+
+
+<div class="col-lg-4">
+	<div style="margin-top: -20px;">
+		<br>
+		<table>
+			<tr>
+				<td><small>{% trans 'Created' %}:&nbsp;</small></td>
+				<td><small>{{ orders.dateofcreation }}</small></td>
+			</tr>
+			<tr>
+				<td><small>{% trans 'Last modified' %}:&nbsp;</small></td>
+				<td><small>{{ orders.lastmodification }}</small></td>
+			</tr>
+		</table>
+	</div>
+	<h2>{{ orders.number }}</h2>
+	<table>
+		<tr>
+			<td>{% trans 'Priority' %}:&nbsp;</td>
+			<td><b>{{ orders.priority }}</b></td>
+		</tr>
+		<tr>
+			<td>{% trans 'Origin' %}:&nbsp;</td>
+			<td><b>{{ orders.origin }}</b></td>
+		</tr>
+		<tr>
+			<td>{% trans 'Sender doctor' %}:&nbsp;</td>
+			<td><b>{{ orders.doctor }}</b></td>
+		</tr>
+		<tr>
+			<td>{% trans 'Diagnosis' %}:&nbsp;</td>
+			<td><b>{{ orders.get_diagnosis }}</b></td>
+		</tr>
+		<tr>
+			<td>{% trans 'Insurence' %}:&nbsp;</td>
+			<td><b>{{ orders.insurence }}</b></td>
+		</tr>
+		<tr>
+			<td>{% trans 'Note' %}:&nbsp;</td>
+			<td><b>{{ orders.note }}</b></td>
+		</tr>
+		<tr>
+			<td>{% trans 'Created / Modified by' %}:&nbsp;</td>
+			<td><b>{{ orders.lastmodifiedby }}</b></td>
+		</tr>
+		<td>{% trans 'Created at' %}:&nbsp;</td>
+		<td><b>{{ orders.dateofcreation }}</b></td>
+		</tr>
+	</table>
+
+	<br> <br>
+</div>
+<div class="col-lg-4">
+	<fieldset>
+		<legend>{% trans 'Patient Data' %}</legend>
+		<table>
+			<tr>
+				<td>{% trans 'Patient ID' %}:&nbsp;</td>
+				<td><h4>
+						{{ orders.patient.patient_id }}
+						<h4></td>
+			</tr>
+			<tr>
+				<td>{% trans 'Name' %}:&nbsp;</td>
+				<td><h4><a href="{{ orders.patient.get_absolute_url }}">{{ orders.patient.name }}</a>
+						<h4></td>
+			</tr>
+			<tr>
+				<td>{% trans 'Gender' %}:&nbsp;</td>
+				<td><b>{{ orders.patient.gender }}</b></td>
+			</tr>
+			<tr>
+				<td>{% trans 'Date of Birth' %}:&nbsp;</td>
+				<td><b>{{ orders.patient.dob }}</b></td>
+			</tr>
+			<td>{% trans 'Address' %}:&nbsp;</td>
+			<td><b>{{ orders.patient.address }}</b></td>
+			</tr>
+		</table>
+	</fieldset>
+</div>
+
+{% if samples %}
+<div class="col-lg-4">
+	<fieldset>		
+		<table class="table">
+			<thead>
+			<tr>
+				<td>Sample No.</td>
+				<td>Specimen</td>
+			</tr>
+		</thead>
+		{% for sample in samples %}
+			<tr>
+				<td>{{ sample.sample_no }}</td>
+				<td>{{ sample.specimen.name }}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</fieldset>
+</div>
+{% endif %}
+
+<div class="col-md-12">
+<table class="table">
+	<thead>
+		<tr>
+			<td>Test</td>
+			<td>Tariff</td>
+			<td>Service</td>
+			<td>SubTotal</td>
+		</tr>
+	</thead>
+	{% for tes in orders.get_test_price %}
+	<tr>
+		<td>{{ tes.order_items__test__name }}</td>
+		<td>{{ tes.order_items__test__test_price__tariff|intcomma }}</td>
+		<td>{{ tes.order_items__test__test_price__service|intcomma }}</td>
+		<td>{{ tes.sub_total|intcomma }}</td>
+	</tr>
+	{% endfor %}
+	<tr>
+		<td class="text-center">Total</td>
+		<td>{{ orders.get_sub_total_price.tariff_subtotal|intcomma }}</td>
+		<td>{{ orders.get_sub_total_price.service_subtotal|intcomma }}</td>
+		<td><u><strong>{{ orders.get_total_price.total|intcomma }}</strong></u></td>
+	</tr>
+</table>
+</div>
+
+
+</div>
+{% endblock %}
+
+{% block main_footer %}
+	{% if MENU_BTN_PRINT_RECEIPT.num_value == 1 %}
+	    <a href="print/receipt" target="_blank" class="btn btn-info" role="button">
+	    <span class="fa fa-print"></span>&nbsp;{% trans "Print Receipt" %}</a>
+    {% endif %}
+    
+    {% if MENU_BTN_PRINT_RECEIPT.num_value == 1 %}
+	    <a href="print/bill" target="_blank" class="btn btn-info" role="button">
+	    <span class="fa fa-print"></span>&nbsp;{% trans "Print Bill" %}</a>
+    {% endif %}
+    
+    {% if MENU_BTN_PRINT_WORKLIST.num_value == 1 %}
+	    <a href="print/worklist" target="_blank" class="btn btn-info" role="button">
+	    <span class="fa fa-print"></span>&nbsp;{% trans "Print Worklist" %}</a>
+	{% endif %}
+	
+	{% if MENU_BTN_PRINT_BARCODE.num_value == 1 %}
+	<div class="btn-group dropup">
+	    <button type="button dropup" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+	      Print Label
+	      <span class="caret"></span>
+	    </button>
+	    <ul class="dropdown-menu">
+	    {% for lp in labelprinters %}
+	      <li><a href="label?printer={{ lp.id }}">{{ lp.name }}</a></li>
+	     {% endfor %}
+	    </ul>
+	</div>
+	{% endif %}
+							
+						
+    <!-- <a href="send/lis" class="btn btn-info" role="button">
+    <span class="fa fa-paper-plane-o"></span>&nbsp;{% trans "Send to LIS" %}</a> -->
+    
+{% endblock %}

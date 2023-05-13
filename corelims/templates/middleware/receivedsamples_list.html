@@ -1,0 +1,70 @@
+{% extends "base/table_view_base_middleware.html" %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+{% load widget_tweaks %}
+
+{% block meta_title %}
+    {% trans "Received sample" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Received sample" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active">{% trans "Received sample" %}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Received sample" %}
+{% endblock %}
+
+{% block main_toolbar %}
+    {% if perms.crm_core.add_orders %}
+       
+    {% endif %}
+{% endblock %}
+
+{% block main_inner %}
+
+
+<form method="post">
+{% csrf_token %}
+<div class="well">
+<div class="row">
+SampleID :<input id="sampleid" name="sampleid"></input>
+
+<button class="btn btn-success" onclick="location.href='{% url 'order_patient' %}'"
+                title="{% trans 'Create Patient Order' %}" data-toggle="tooltip" data-placement="top">
+            <span class="glyphicon glyphicon-plus"></span></button>
+</div>
+</div>
+</form>
+
+<form method="get">
+    <div class="well">
+      <h4 style="margin-top: 0"><a href='{{ request.path }}' >Clear</a></h4>
+      <div class="row">
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.number.label_tag }}
+          {% render_field filter.form.number class="form-control" %}
+        </div>
+		<div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.patient__patient_id.label_tag }}
+          {% render_field filter.form.patient__patient_id class="form-control" %}
+        </div>
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.patient__name.label_tag }}
+          {% render_field filter.form.patient__name class="form-control" %}
+        </div>
+        
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-search"></span> Search
+      </button>
+       
+    </div>
+  </form>
+
+    {% render_table receivedsamplestable "tables2/bootstrapped-tables2.html" %}
+{% endblock %}

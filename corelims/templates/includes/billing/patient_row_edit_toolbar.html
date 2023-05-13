@@ -1,0 +1,38 @@
+{% load i18n %}
+
+<div class="btn-group btn-group-sm" role="group">
+  {% if perms.corelism.view_patients %}
+  <button
+    class="btn btn-default"
+    onclick="location.href=
+                '{% url 'patient_detail' record.pk %}'"
+    title="{% trans 'Patient detail' %}"
+    data-toggle="tooltip"
+    data-placement="top"
+  >
+    <span class="glyphicon glyphicon-search"></span>
+  </button>
+  {% endif %} {% if perms.corelism.change_patients %}
+  <button
+    class="btn btn-info"
+    onclick="location.href=
+        	'{% url 'patient_edit' record.pk %}'"
+    title="{% trans 'Edit patient' %}"
+    data-toggle="tooltip"
+    data-placement="top"
+  >
+    <span class="glyphicon glyphicon-pencil"></span>
+  </button>
+  {% endif %} {% if perms.corelism.delete_patients %}
+  <button
+    class="btn btn-danger"
+    onclick="location.href=
+                '{% url 'patient_delete' record.pk %}'"
+    title="{% trans 'Delete patient' %}"
+    data-toggle="tooltip"
+    data-placement="top"
+  >
+    <span class="glyphicon glyphicon-trash"></span>
+  </button>
+  {% endif %}
+</div>

@@ -1,0 +1,66 @@
+{% extends "base/table_view_base.html" %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+{% load widget_tweaks %}
+{% load staticfiles %}
+
+{% block meta_title %}
+    {% trans "Returning product" %}
+{% endblock %}
+
+{% block title %}
+    {% trans "Returning product" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active">{% trans "Returning product" %}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Returning product" %}
+{% endblock %}
+
+{% block main_toolbar %}
+    {% if perms.inventory.add_returning_product %}
+        <button class="btn btn-success" onclick="location.href='{% url 'select_instrument' %}'"
+                title="{% trans 'Return product' %}" data-toggle="tooltip" data-placement="top">
+            <span class="glyphicon glyphicon-plus"></span></button>
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+ 	<link href="{% static "assets/css/datetimepicker.css" %}" type="text/css" media="all" rel="stylesheet" />
+    {% endblock %}
+    
+    {% block extra_js %}
+    <script type="text/javascript" src="{% static "assets/js/bootstrap-datetimepicker.js" %}"></script>
+    <script type="text/javascript" src="{% static "assets/js/locales/bootstrap-datetimepicker.id.js" %}"></script>
+    {% endblock %}
+    
+{% block main_inner %}
+<form method="get">
+    <div class="well">
+      <h4 style="margin-top: 0"><a href='{{ request.path }}' >Clear</a></h4>
+      <div class="row">		
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.date_return.label_tag }}
+          {% render_field filter.form.date_return class="form-control" %}
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                $('#id_date_return').datetimepicker({minView: 2,autoclose: true,language: 'id',startView: 2,format: 'dd-mm-yyyy'});
+            });
+        </script>
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.stock_in.supplier.label_tag }}
+          {% render_field filter.form.stock_in.supplier class="form-control" %}
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-search"></span> Search
+      </button>
+       
+    </div>
+  </form>
+    {% render_table returningproducttable "tables2/bootstrapped-tables2.html" %}
+{% endblock %}

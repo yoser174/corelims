@@ -1,0 +1,22 @@
+{% load i18n %}
+<div style="margin-left: 50px">
+  <h3>{% trans "coreLISM Clinical Laboratory " %}{{ version }}</h3>
+  <h5></h5>
+  <br /><br />
+
+  <fieldset>
+    <br /><br />
+
+    <legend>
+      {% for lab_name in org_lab_name %}{{ lab_name.char_value }}{% endfor %}
+    </legend>
+    {% for lab_addr in org_lab_address %}{{ lab_addr.char_value }}{% endfor %}
+  </fieldset>
+  <br /><br />
+  <div class="pn">{{ update |safe }}</div>
+
+  {% if not request.user.is_authenticated %}
+
+  <p>Please <a href="/billing/login/">login</a></p>
+  {% endif %}
+</div>

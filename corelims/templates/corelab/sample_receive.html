@@ -1,0 +1,185 @@
+{% extends "base/form_view_base_billing.html" %}
+{% load i18n bootstrap3 wa_status %}
+
+{% block meta_title %}
+    {% trans "Sample Receive" %}
+    {{ ord.number }} {{ ord.patient.name }}
+{% endblock %}
+
+{% block title %}
+    {% trans "Sample Receive" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <!-- <li class="active">
+     <a href="{% url 'complete_orders' %}">{% trans "Sample Receive" %}</a></li>  -->
+    <li class="active">{% trans "Sample Receive" %}</li>
+{% endblock %}
+
+{% block main_header %}
+    {% trans "Sample Receive" %}
+{% if order %}
+<br>
+
+{% for ord in order %}
+<br>
+[ {{ ord.patient.patient_id }} ]
+{{ ord.patient.name }}
+{% endfor %}
+{% endif %}
+{% endblock %}
+<form method="post">
+{% csrf_token %}
+
+{% block main_toolbar %}
+{% endblock %}
+
+{% block main_inner %}
+ 
+<form action="/sample_receive/" method="post">
+  <div class="form-group">
+    <label for="orderno">{% trans "Order Number" %}</label>
+    <input type="text" class="form-control" id="orderno" name="orderno" {% if orderno %} value="{{ orderno }}" {% endif %} >
+  </div>
+  <button type="submit" name="getsample" class="btn btn-default">{% trans "Get samples" %}</button>
+</form>
+
+
+{% if samples %}
+<table class="table table-striped">
+<thead>
+<tr>
+	<th>{% trans "Sample Number" %}</th>
+	<th>{% trans "Specimen" %}</th>
+	<th>{% trans "Status" %}</th>
+	<th>{% trans "Log" %}</th>
+	<th></th>
+</tr>
+</thead>
+
+
+<tbody>
+{% for sample in samples %}
+      <tr>
+        <td>{{ sample.sample_no }}</td>
+        <td>{{ sample.specimen.name }}</td>
+        <td>{{ sample.get_status_display }}</td>
+        <td>{{ sample.id | order_sample_log }}</td>
+        <td>
+        <div class="btn-group dropdown">
+	    <button type="button dropdown" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+	    <span class="fa fa-barcode"></span>&nbsp;
+	      {% trans "Label" %}
+	      <span class="caret"></span>
+	    </button>
+	    <ul class="dropdown-menu">
+	    {% for lp in label_printer %}
+	      <li><a href="?order_sample_id={{ sample.id }}&printer={{ lp.id }}">{{ lp.name }}</a></li>
+	     {% endfor %}
+	    </ul>
+	    <button type="button" class="open-addComment btn btn-default" data-toggle="modal" data-id="{{ sample.id }}" data-target="#addCommentDialog">
+        <span class="fa fa-comment"></span>&nbsp;&nbsp;{% trans "Add comment" %}</button>
+	</div>
+        {% if sample.status != '1' %}
+        <button type='submit' class="btn btn-default" name="receive_{{ sample.id }}" role="button">
+        <span class="fa fa-capsules"></span>&nbsp;{% trans "Receive" %} </button>
+        {% else %}
+        <button type="button" class="open-requestNewDialog btn btn-default" data-toggle="modal" data-id="{{ sample.id }}" data-target="#requestNewDialog">
+        <span class="fa fa-exclamation"></span>&nbsp;&nbsp;{% trans "Request new" %}</button>
+    {% endif %}
+    <!--  
+    <button type='submit' class="btn btn-default" name="addissues_{{ sample.id }}" role="button">
+        <span class="fa fa-comment"></span>&nbsp;{% trans "Add issues" %} </button>
+         -->
+    </td>
+      </tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+
+<!-- Modal -->
+<div id="requestNewDialog" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+    <form action="/sample_receive/" method="post">
+     {% csrf_token %}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{% trans "Request new sample" %}</h4>
+      </div>
+      <div class="modal-body">
+       <input type="hidden" name="order_sample_id" id="order_sample_id" value=""/>
+       <input type="hidden" class="form-control" id="orderno" name="orderno" {% if orderno %} value="{{ orderno }}" {% endif %} >
+        <p>{% trans "Please select the reason" %}</p>
+        
+
+		  <select  class="form-control" id="reason" name="reason" required>
+		  	<option disabled selected value> -- select a reason -- </option>
+		  {% for request_new in request_new_data %}
+		    <option value="{{ request_new.id }}">{{ request_new.name }}</option>
+		    {% endfor %}
+		  </select>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"> <span class="fa fa-window-close"></span>&nbsp;{% trans "Cancel" %}</button>
+        <button type='submit' class="btn btn-default" name="requestnew" role="button">
+        <span class="fa fa-check-circle"></span>&nbsp;{% trans "Request new" %} </button>
+      </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal add comment-->
+<div id="addCommentDialog" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+<!-- Modal content add comment-->
+    <div class="modal-content">
+    <form action="/sample_receive/" method="post">
+     {% csrf_token %}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{% trans "Add comment" %}</h4>
+      </div>
+      <div class="modal-body">
+       <input type="hidden" name="order_sample_id" id="order_sample_id" value=""/>
+       <input type="hidden" class="form-control" id="orderno" name="orderno" {% if orderno %} value="{{ orderno }}" {% endif %} >
+        <textarea class="form-control" name="comment" id="comment" rows="3"></textarea>      
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"> <span class="fa fa-window-close"></span>&nbsp;{% trans "Cancel" %}</button>
+        <button type='submit' class="btn btn-default" name="addcomment" role="button">
+        <span class="fa fa-check-circle"></span>&nbsp;{% trans "Save" %} </button>
+      </div>
+      </form>
+    </div>
+
+
+  </div>
+</div>
+<script type="text/javascript">
+$(document).on("click", ".open-requestNewDialog", function () {
+     var order_sample_id = $(this).data('id');
+     $(".modal-body #order_sample_id").val( order_sample_id );
+     // As pointed out in comments, 
+     // it is unnecessary to have to manually call the modal.
+     // $('#requestNewDialog').modal('show');
+});
+$(document).on("click", ".open-addComment", function () {
+    var order_sample_id = $(this).data('id');
+    $(".modal-body #order_sample_id").val( order_sample_id );
+});
+</script>
+{% endblock %}
+
+{% block main_footer %}
+    
+	
+{% endblock %}
