@@ -1,6 +1,6 @@
 # corelims
 
-coreLIS is a opensource Laboratory Information Management Systems
+coreLIS is a Laboratory Information Management Systems
 
 # cara install
 
