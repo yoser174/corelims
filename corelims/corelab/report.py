@@ -23,7 +23,7 @@ class JasperServer(object):
             group_id = ""
             data = """
             <reportExecutionRequest>
-                <reportUnitUri>/reports/corelims/ciremaiReport</reportUnitUri>
+                <reportUnitUri>/reports/corelims/clinical_result</reportUnitUri>
                 <async>false</async>
                 <freshData>true</freshData>
                 <saveDataSnapshot>false</saveDataSnapshot>
@@ -43,7 +43,7 @@ class JasperServer(object):
         else:
             data = """
             <reportExecutionRequest>
-                <reportUnitUri>/reports/corelims/ciremaiReport</reportUnitUri>
+                <reportUnitUri>/reports/corelims/clinical_result</reportUnitUri>
                 <async>false</async>
                 <freshData>true</freshData>
                 <saveDataSnapshot>false</saveDataSnapshot>

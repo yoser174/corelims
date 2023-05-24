@@ -4,18 +4,18 @@
 {% load widget_tweaks static %}
 
 {% block meta_title %}
-    {% trans "Orders report" %}
+    {% trans "Ordersreport" %}
 {% endblock %}
 
 {% block title %}
-    {% trans "Orders report" %}
+    {% trans "Ordersreport" %}
 {% endblock %}
 
 {% block breadcrumb_menu %}
 {% endblock %}
 
 {% block main_header %}
-    {% trans "Orders report" %}
+    {% trans "Ordersreport" %}
 {% endblock %}
 
 {% block main_toolbar %}
@@ -158,9 +158,9 @@
                     
                     <div class="input-group-btn">
                     {% if report %}
-                    	<a href="{% querystring 'export'='xlsx' %}" target="_blank" id="code" type="submit" class="btn btn-success" title="{% trans 'Export to xlsx' %}"><span class="fa fa-file-excel"></span>&nbsp;XSLS</a>
-                    	<a href="{% querystring 'export'='pdf' %}" target="_blank" id="code" type="submit" class="btn btn-success" title="{% trans 'Export to pdf' %}"><span class="fa fa-file-pdf"></span>&nbsp;PDF</a>
-                    	<a href="{% querystring 'export'='docx' %}" target="_blank" id="code" type="submit" class="btn btn-success" title="{% trans 'Export to docx' %}"><span class="fa fa-file-word"></span>&nbsp;DOCX</a>
+                    	<a href="{% querystring 'export'='xlsx' %}" target="_blank" id="code" type="submit" class="btn btn-success" title="{% trans 'Export to xlsx' %}"><span class="fa fa-file-excel-o"></span>&nbsp;XSLS</a>
+                    	<a href="{% querystring 'export'='pdf' %}" target="_blank" id="code" type="submit" class="btn btn-success" title="{% trans 'Export to pdf' %}"><span class="fa fa-file-pdf-o"></span>&nbsp;PDF</a>
+                    	<a href="{% querystring 'export'='docx' %}" target="_blank" id="code" type="submit" class="btn btn-success" title="{% trans 'Export to docx' %}"><span class="fa fa-file-word-o"></span>&nbsp;DOCX</a>
                      {% endif %}
                     </div>
                 </div>

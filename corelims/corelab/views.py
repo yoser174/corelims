@@ -483,7 +483,7 @@ def report_orders(request):
     data = models.Orders.objects.all()
     today = timezone.now().date()
 
-    output = "pdf"
+    output = "html"
 
     if request.GET.get("export"):
         output = request.GET.get("export")
@@ -506,23 +506,7 @@ def report_orders(request):
 
     b_ok, content = res_rep.get_report_orders(start_date, end_date, output)
 
-    print(b_ok)
-    print(content)
-
-    if not b_ok:
-        return JsonResponse(content)
-
     report_content = content
-
-    # orderstable = JMTable(data)
-    # orderstable.paginate(page=request.GET.get('page', 1), per_page=10)
-
-    # RequestConfig(request).configure(orderstable)
-
-    # export_format = request.GET.get('_export', None)
-    # if TableExport.is_valid_format(export_format):
-    #    exporter = TableExport(export_format, orderstable)
-    #    return exporter.response('table.{}'.format(export_format))
 
     response = ""
 
@@ -544,7 +528,6 @@ def report_orders(request):
 
     context = {"report": report_content, "filter": filter}
     return render(request, template, context)
-
 
 @login_required(login_url="login_billing")
 def report_ordertests(request):
@@ -625,7 +608,7 @@ def report_tats(request):
 
     res_rep = report.JasperServer()
 
-    b_ok, content = res_rep.get_report_ordertests(start_date, end_date, output)
+    b_ok, content = res_rep.get_report_tats(start_date, end_date, output)
 
     if not b_ok:
         return JsonResponse(content)
