@@ -506,6 +506,12 @@ def report_orders(request):
 
     b_ok, content = res_rep.get_report_orders(start_date, end_date, output)
 
+    print(b_ok)
+    print(content)
+
+    if not b_ok:
+        return JsonResponse(content)
+
     report_content = content
 
     # orderstable = JMTable(data)
@@ -568,6 +574,61 @@ def report_ordertests(request):
     res_rep = report.JasperServer()
 
     b_ok, content = res_rep.get_report_ordertests(start_date, end_date, output)
+
+    report_content = content
+
+    response = ""
+
+    if output != "html":
+        if output == "xlsx":
+            response = HttpResponse(
+                content,
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
+        if output == "pdf":
+            response = HttpResponse(content, content_type="application/pdf")
+        if output == "docx":
+            response = HttpResponse(
+                content,
+                content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            )
+
+        return response
+
+    context = {"report": report_content, "filter": filter}
+    return render(request, template, context)
+
+@login_required(login_url="login_billing")
+def report_tats(request):
+    template = "report/tats.html"
+    data = models.Orders.objects.all()
+    today = timezone.now().date()
+
+    output = "html"
+
+    if request.GET.get("export"):
+        output = request.GET.get("export")
+
+    if request.GET.get("order_date"):
+        d_range = request.GET.get("order_date")
+        start_date = d_range[:10]
+        end_date = d_range[13:23]
+    else:
+        start_date = today
+        end_date = today
+
+    data = data.filter(order_date__range=[start_date, end_date])
+
+    filter = filters.JMFilter(request.GET, queryset=data)
+
+    report_content = ""
+
+    res_rep = report.JasperServer()
+
+    b_ok, content = res_rep.get_report_ordertests(start_date, end_date, output)
+
+    if not b_ok:
+        return JsonResponse(content)
 
     report_content = content
 

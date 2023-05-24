@@ -138,6 +138,7 @@ urlpatterns = [
     # #############
     url(r'^reports/orders/$', views.report_orders, name='rep_orders_list'),
     url(r'^reports/ordertests/$', views.report_ordertests, name='rep_ordertests_list'),
+    url(r'^reports/tats/$', views.report_tats, name='rep_tat'),
     # old
     url(r'^reports/jm/$', views.report_jm, name='jm_list'),
     url(r'^reports/origin/$', views.report_origin, name='origin_list'),

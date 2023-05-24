@@ -4,11 +4,11 @@ coreLIS is a opensource Laboratory Information Management Systems
 
 # cara install
 
-1. install Python 3.6 64bit ke c:\python27
+1. install Python 3.6 64bit ke c:\python36
    1.a setup virtual envirtoment
 
 - install virtual env: python install virtualenv
-- buat venv baru: virtualenv -p c:\python27\python.exe venv
+- buat venv baru: virtualenv -p c:\python36\python.exe venv
 - activate virtualenv: venv\script\activate
 
   1.b install pip package
@@ -18,7 +18,6 @@ coreLIS is a opensource Laboratory Information Management Systems
 2. install MySQL community 5.7 64bit
    2.a buat login mysql corelism pass: corelism (full access insert, delete, create,...)
 
-- buat migrations: python manage.py makemigrations
 - lakukan migrate: python manage.py migrate
 
   2.b buat login admin
@@ -126,3 +125,16 @@ MENU_BTN_PRINT_BARCODE 1 1: akifkan menu print barcode, 0: non-aktif
   5.5 All area
 
 - semua order test akan dimunculkan di menu ini
+
+6. Reporting
+
+6.1 Reporting menggunakan Jasper Server dan designer menggunakan jasper studio
+
+- download jasper Studio dari: `https://onboardcloud.dl.sourceforge.net/project/jasperstudio/JaspersoftStudio-6.20.3/js-studiocomm_6.20.3_windows_x86_64.exe`
+- download jasper Server dari: `https://onboardcloud.dl.sourceforge.net/project/jasperserver/JasperServer/JasperReports%20Server%20Community%20Edition%208.2.0/TIB_js-jrs-cp_8.2.0_win_x86_64.exe`
+
+  6.2 install
+
+- install jasper server dan jasper studio
+- koneksikan jasper studio ke jasper server
+- import backup jasper server dari export.zip
