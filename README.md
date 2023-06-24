@@ -138,3 +138,16 @@ MENU_BTN_PRINT_BARCODE 1 1: akifkan menu print barcode, 0: non-aktif
 - install jasper server dan jasper studio
 - koneksikan jasper studio ke jasper server
 - import backup jasper server dari export.zip
+
+# PRODUCTION
+
+install IIS pada windows
+
+link : `https://blog.nonstopio.com/deploy-django-application-on-windows-iis-server-93aee2864c41?gi=3c411d623842`
+
+Change setttings.py
+
+- DEBUG = False
+- change SECRET_KEY
+  running: python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+  ganti output dengan generate screte_key ke SECRET_KEY

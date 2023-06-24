@@ -1,0 +1,39 @@
+1. bisa search parameter untuk all, jadi bisa ingat kode aja tanpa ingat group nya.
+2. tambahkan discount per all semua test selalin bisa pertarif.
+3. tambahkan receive all pada menu receive sample
+4. menu orde dari SIMRS bisa ditarik ulang kalau tidak ketemu di daylist # canceled
+5. ada icon beda untuk order lab sama order dari SIMRS/tarikan data di menu daylist/ Workarea, ada filter juga yg dari billing sendiri atau dari dari tarikan.
+6. filter workarea/ daylist pilih range tanggal nya dari tanggal berapa sampainya. untnuk filter ordernya.
+7. comment result perlu dibuat untuk status hasil catatanya, duplo atau ulang, encerkan
+8. history per test tidak jalan 
+9. ada tombol telepon jika ada panic value, bisa notifikasi ke dokter, (? bisa email, wa, sms) ke kepala lab, atau ke doter pak (internal dulu) kalau dokter pengirim manual
+10. <new app> Tmabahkan viewer monitoring TV jika panic range ada alaram dengan suara, terus bisa tampilkan TAT dasboard (TV di dalam lab) produktivitas,panic range alaram,
+ bisa dibedakan konsumsi pasien (TV diluar) kita siapakan kolumnya tapi sistem antrian vendor lain (kita siapkan tempatnya),  antrian sistem untuk kateogri lab, 
+dan konsumsi buat lab viewernya apa. dalams atu modul module viewer, pending sample, complete berapa, TAT dasbhoard, (modul sistem baru).
+11. Rerun/Repeat/ pengulanan, statitiknya tambahkan, berapa banyak dalam sehari dia mengunlang dan test nya apa saja. CPRR report nya.
+12. interfacing hasil dapat mematch hasil dari alat, ada menu sendiri matching hasil untuk narik data dari alat, 
+13. kurang dari nilai normal sepertinya kebalik simbolnya
+14. QC perlu development, sama kyk cit5k bisa multiple QC (evel 1,2,3  dalam LJ chart), bisa indvidual (per test) bisa daily atau columulatif, dijadikan satu. 
+control , instrument, test, dan range date, lot number, exp.date. calibrations. LJ Chart, 1,2,3 SD, (default 3sd layarnya), mean, CV, static, bias, TE,  Westgarad rules.
+15. formula calculations, sudah ada perlu disimulate.
+16. pisahan ada conection manager untuk memonitoring koneksi alat2, bisa di liat log2 order, result, dari alat, bisa di trace dan untuk mantau. 
+koleksi interfacing alat-alat, interface per alat, kita sudah baku cepat dan bagus, ada orang ada LIS orang, interfacing aja, kyk coding paket2an, list instrument yg seberapa.
+compare polulasi, dak semua dibuat.
+17.istilah2 diperhaitikan, jgn keliahatan ambil punya roche, ambil istilah umum saja, 
+18. dibuatkan key licenses, koneksi ke LIS, ke HIS, instrument. <last>
+
+
+
+
+
+
+
+
+
+
+
+
+# update #2
+1. QC fnalizasi mennunya. (prioritas 1 segera produksi)
+2. Sistim antrian
+3. Inventory management system.

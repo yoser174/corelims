@@ -560,7 +560,7 @@ class Patients(models.Model):
         Genders, on_delete=models.PROTECT, verbose_name=_("Gender")
     )
     dob = models.DateField(
-        verbose_name=_("Date of birth"), help_text=_("Date format: DD-MM-YYYY")
+        verbose_name=_("Date of birth"), help_text=_("Date format: YYYY-MM-DD")
     )
     address = models.CharField(
         max_length=100, verbose_name=_("Address"), help_text=_("Patient Address")
@@ -2058,21 +2058,21 @@ class OrderExtended(models.Model):
 
     def get_progress(self):
         # ores = OrderResults.objects.filter(order=self.order,validation_status=0,is_header=0)
-        return int(self.order.status) * 25
+        #return int(self.order.status) * 25
         # if order.status == 1:
         #    return 0
-        # ores = OrderResults.objects.filter(order=self.order,validation_status=1,is_header=0)
-        # if ores.count()>0:
-        #    return 25
-        # ores = OrderResults.objects.filter(order=self.order,validation_status=2,is_header=0)
-        # if ores.count()>0:
-        #    return 50
-        # ores = OrderResults.objects.filter(order=self.order,validation_status=3,is_header=0)
-        # if ores.count()>0:
-        #    return 75
-        # ores = OrderResults.objects.filter(order=self.order,validation_status=4,is_header=0)
-        # if ores.count()>0:
-        #    return 100
+        ores = OrderResults.objects.filter(order=self.order,validation_status=1,is_header=0)
+        if ores.count()>0:
+           return 25
+        ores = OrderResults.objects.filter(order=self.order,validation_status=2,is_header=0)
+        if ores.count()>0:
+           return 50
+        ores = OrderResults.objects.filter(order=self.order,validation_status=3,is_header=0)
+        if ores.count()>0:
+           return 75
+        ores = OrderResults.objects.filter(order=self.order,validation_status=4,is_header=0)
+        if ores.count()>0:
+           return 100
 
     def __str__(self):
         return "%s" % (self.order)

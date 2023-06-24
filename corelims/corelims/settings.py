@@ -146,7 +146,7 @@ TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
@@ -170,3 +170,5 @@ JASPER_CONN = "TEST"
 JASPER_USER = "jasperadmin"
 JASPER_PASS = "jasperadmin"
 JASPER_REST = "http://127.0.0.1:8080/jasperserver/rest_v2/"
+
+DATE_INPUT_FORMATS = ("%d-%m-%Y", "%Y-%m-%d")

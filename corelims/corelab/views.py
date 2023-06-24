@@ -96,18 +96,7 @@ from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP
 
 
 UPDATE = """
-<b>0.0.0.4</b><br>
-20190831 - tambahkan menu instrument batch untuk mengirim working order secara batch ke alat<br>
-20190608 - pada workarea tambahkan icon status receive dan modal display detail proses receive sample <br>
-20190608 - tambahkan add comment pada receive sample<br>
-20190607 - tambahkan request new sample pada saat receive sample<br>
-20190606 - Tambahkan menu baru sample receive untuk penerimaan sampel di lab<br>
-20190604 - tambahkan menu complete order untuk melihat order yang sudah selesai yang tidak ada di workarea<br>
-20190603 - tambahkan informasi rerun (hasil sebelum pengulangan)<br>
-20190603 - order yang tampil di workarea adalah yang belum selesai (belum di print) <br>
-<b>0.0.0.3</b><br>
-20180910 - Unik untuk price dan priority<br>
-20181101 - Workarea bisa disetting di administration
+
 """
 settings.UPDATE = UPDATE
 
@@ -979,7 +968,8 @@ def show_workarea_group(request, pk):
     # order_wa = models.OrderTests.objects.filter(test__test_group__in=test_group).values('order')
 
     order_wa = models.OrderResults.objects.filter(
-        test__test_group__in=test_group, validation_status__lte=3
+        test__test_group__in=test_group
+        # , validation_status__lte=3
     ).values("order")
 
     data = models.Orders.objects.filter(pk__in=order_wa)
@@ -1038,7 +1028,7 @@ def capture_workarea(request, area_pk):
 @login_required(login_url="login_billing")
 def show_workarea(request):
     workareas = models.Workarea.objects.all().order_by("sort")
-    order_wa = models.OrderResults.objects.filter(validation_status__lte=3).values(
+    order_wa = models.OrderResults.objects.values(
         "order"
     )
     data = models.Orders.objects.filter(pk__in=order_wa)

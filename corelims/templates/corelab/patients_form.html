@@ -62,7 +62,7 @@ $("#id_age").on("input", function () {
 
 	var year = (new Date()).getFullYear();
 	var age = Number(this.value);
-	$('#id_dob').val("01-01-"+(year-age)).trigger("change");
+	$('#id_dob').val((year-age)+"-01-01").trigger("change");
 });
 </script>
 {% endblock %}
