@@ -1,0 +1,336 @@
+###############################
+# cobas6k driver
+#
+# auth: Yoserizal
+# date: 29 Maret 2018
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+####
+# fix:
+# 2018-07-25 got barcode as Sampel ID data m[3] rather than sample id from instrument
+
+import serial
+import time
+import logging
+import sqlite3
+import MySQLdb
+from datetime import datetime
+import socket
+import sys,os
+
+from libs.corelab_astm.codec import decode_message, make_checksum
+
+
+# adding import libs from parent folder
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+from db.my_db import my_db
+from .astm import astm
+# import astm
+
+from libs.corelab_astm import decode
+
+# reload(sys)  
+# sys.setdefaultencoding('ISO-8859-1')
+
+
+DRIVER_NAME = 'E411'
+DRIVER_VERSION = '0.0.1'
+
+ENCODING = 'latin-1'
+NULL = b'\x00'
+STX = b'\x02'
+ETX = b'\x03'
+EOT = b'\x04'
+ENQ = b'\x05'
+ACK = b'\x06'
+NAK = b'\x15'
+ETB = b'\x17'
+LF  = b'\x0A'
+CR  = b'\x0D'
+CRLF = CR + LF
+VT = b'\x0B'
+FS = b'\x1C'
+RECORD_SEP    = b'\x0D' # \r #
+FIELD_SEP     = b'\x7C' # |  #
+REPEAT_SEP    = b'\x5C' # \  #
+COMPONENT_SEP = b'\x5E' # ^  #
+ESCAPE_SEP    = b'\x26' # &  #
+
+
+TCP_IP = '127.0.0.1'
+TCP_PORT = 5005
+BUFFER_SIZE = 1024
+
+MY_USER = 'corelims'
+MY_PASS = 'corelims'
+
+class E411(object):
+
+    def __init__(self,server,db,instrument_id,name,
+                 connection_type,
+                 driver,serial_baud_rate,serial_data_bit,serial_port,serial_stop_bit,
+                 tcp_conn_type,tcp_host,tcp_port):
+        self.message=''
+        logging.info( DRIVER_NAME+' - '+DRIVER_VERSION+' loaded.')
+        logging.info('connection type: [%s]' % connection_type)
+        self.server = server
+        self.instrument_id = instrument_id
+        self.connection_type = connection_type
+        self.tcp_conn_type = tcp_conn_type
+        self.tcp_host = tcp_host
+        self.tcp_port = tcp_port
+        MY_DB = db
+
+        # mysql connection
+        self.my_conn = my_db(self.server,MY_DB)
+        # self.astm = astm(self.connection_type,self.tcp_conn_type,self.tcp_host,self.tcp_port)
+        logging.info('connection_type [%s]' % self.tcp_conn_type)
+        if self.tcp_conn_type is 'S':
+            logging.info('build TCP server...')
+            self.tcp_host = '0.0.0.0'
+            self.astm = astm(conn_type=self.connection_type,
+                             tcp_conn_type=self.tcp_conn_type,
+                             tcp_host=self.tcp_host,
+                             tcp_port=self.tcp_port)
+        else:
+            logging.error('not implemented yet')
+            sys.exit(1)
+
+    def sample_query_real(self,sample_no,sender,seq,rack,pos,rack_type,container_type):
+        ts = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+        logging.info(sender)
+        h = 'H|\^&|||'+'^'.join(map(str, sender))+'|||||Modular|TSDWN^REPLY|P|1\r'
+        # h = 'H|\^&|||'+'^'.join(map(str, sender))+'|||||||SA|1394-97|'+ts+'\r'
+        logging.info(h)
+        # generate PID
+        pat_id,name,dob,sex,doctor,diagnosis,origin,age_year = self.my_conn.get_patient_id(sample_no)
+        p = 'P|1||'+pat_id+'|||||'+sex+'||||||'+age_year+'^Y\r'
+        # p = 'P|1||'+pat_id+'||'+name+'^'+name+'^'+name+'||'+dob+'|'+sex+'|||||'+doctor+'|||||'+diagnosis+'||0001|||||A1|002||||||||\r'
+        logging.info(p)
+        found,tes_arr = self.my_conn.get_test_array(sample_no,self.instrument_id)
+        if not found:
+            logging.info('sample not found')
+            tes_arr = ()
+            # return False
+        logging.info(tes_arr)
+        logging.info(len(tes_arr))
+        tes_dump = ''
+        if tes_arr:
+            rec = 0
+            for tes in tes_arr:
+                if rec==0:
+                    tes_dump +='^^^'+str(tes[0])+'^1'
+                else:
+                    tes_dump +='\\'+'^^^'+str(tes[0])+'^1'
+                rec += 1
+        o = 'O|1|'+sample_no+'|'+seq+'^'+rack+'^'+pos+'^^'+rack_type+'^'+container_type+'|'+tes_dump+'|R||'+ts+'||||A||||1||||||||||O\r'
+        # o = 'O|1|1^1^1|'+sample_no+'|'+tes_dump+'|R|'+ts+'|'+ts+'||||||||serum|'+str(doctor)+'|'+str(origin)+'|1|||||||Q|||||\r'
+        l = 'L|1|N\r'
+        logging.info(o)
+        astm_msg = h+p+o+l
+        logging.info(astm_msg)
+        self.astm.send_enq()
+        data = self.astm.listen()
+        if data==ACK:
+            logging.info('<< ACK')
+            self.astm.send_msg(astm_msg)
+            data = self.astm.listen()
+            if data == ACK:
+                self.astm.send_eot()
+
+    def sample_query(self,sample_no,sender):
+        ts = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+        logging.info(sender)
+        h = 'H|\^&|||'+'^'.join(map(str, sender))+'|||||||SA|1394-97|'+ts+'\r'
+        logging.info(h)
+        # generate PID
+        pat_id,name,dob,sex,doctor,diagnosis,origin = self.my_conn.get_patient_id(sample_no)
+        p = 'P|1||'+pat_id+'||'+name+'^'+name+'^'+name+'||'+dob+'|'+sex+'|||||'+doctor+'|||||'+diagnosis+'||0001|||||A1|002||||||||\r'
+        logging.info(p)
+        tes_arr = self.my_conn.get_test_array(sample_no,self.instrument_id)
+        tes_dump = ''
+        if tes_arr:
+            rec = 0
+            for tes in tes_arr:
+                if rec==0:
+                    tes_dump +=str(rec+1)+'^'+str(tes[0])+'^1^1'
+                else:
+                    tes_dump +='\\'+str(rec+1)+'^'+str(tes[0])+'^1^1'
+                rec += 1
+        o = 'O|1|1^1^1|'+sample_no+'|'+tes_dump+'|R|'+ts+'|'+ts+'||||||||serum|'+str(doctor)+'|'+str(origin)+'|1|||||||Q|||||\r'
+        l = 'L|1|N\r'
+        logging.info(o)
+        astm_msg = h+p+o+l
+        logging.info(astm_msg)
+        self.astm.send_enq()
+        data = self.astm.listen()
+        if data==ACK:
+            self.astm.send_msg(astm_msg)
+            data = self.astm.listen()
+            if data == ACK:
+                self.astm.send_eot()
+        
+    def handlemsg(self,msg):
+        logging.debug('handlemsg()')
+        msg = msg.replace("b'",'')
+        msg = msg.replace("'",'')
+        # msg = msg.replace("\\",'\')
+        msg = msg.replace("\r",CR.decode(ENCODING))
+        logging.debug(msg)
+        logging.debug(type(msg))
+        msg = '1'+msg
+        msg = msg.encode(ENCODING)
+        logging.debug(msg)
+        msg = STX+ msg+CR+ETX+ make_checksum(msg+CR+ETX)+ CR+ LF
+        codec_msg = decode(msg,encoding=ENCODING)
+        logging.info(codec_msg)
+
+        order_id = 0
+        message_type = ''
+        sender = ''
+        sample_id = ''
+        seq = ''
+        rack = ''
+        pos = ''
+        rack_type = ''
+        container_type = ''
+        TSREQ_REAL = False
+
+
+        sample_query = False
+        for m in codec_msg:
+            logging.debug(m[0])
+            logging.debug(m)
+            if m[0] == 'H':
+                logging.debug('Header record')
+                message_type = m[10]
+                sender = m[4]
+            if m[0] == 'Q':
+                logging.debug('Query record')
+                if message_type[0] == 'TSREQ':
+                    if message_type[1] == 'REAL':
+                        sample_id = str(m[2][2]).strip()
+                        logging.debug('Realtime test selection Request [%s]' % sample_id)
+                        seq = m[2][3]
+                        rack = m[2][4]
+                        pos = m[2][5]
+                        rack_type = m[2][7]
+                        container_type = m[2][8]
+                        TSREQ_REAL = True
+
+            if m[0] == 'P':
+                logging.debug('Patient record')
+            if m[0] == 'O':
+                logging.debug('Patient record')
+            if m[0] == 'C':
+                logging.debug('Commnet record')
+            if m[0] == 'R':
+                logging.debug('Result record')
+            if m[0] == 'L':
+                logging.debug('Last record')            
+
+        logging.debug('message_type [%s]' % message_type)
+        
+        # TSREQ_REAL
+        if TSREQ_REAL:
+            logging.debug('Processing TSREQ_REAL [%s]...' % sample_id)
+            self.sample_query_real(sample_id,sender,seq,rack,pos,rack_type,container_type)
+
+
+
+        return True
+    
+        for m in codec_msg:
+            logging.info(m)
+            if m[0] == 'H':
+                sender = m[4]
+                logging.info('message purpose [%s]' % m[10])
+            if m[0] == 'O':
+                # sample_no = m[2][0]
+                sample_no = m[3]
+            if m[0] == 'R':
+                tes_code =  m[2][0]
+                tes_result =  m[3][0]
+                tes_unit = m[4]
+                tes_ref = ''
+                tes_flag = ''
+                self.my_conn.insert_result(sample_no,tes_code,tes_result,tes_ref,tes_unit,tes_flag,self.instrument_id)
+            if m[0] == 'Q':
+                q_sample_no = m[2][1]
+                sample_query = True
+                
+        if sample_query:
+            logging.info('Sample Query: [%s]' % q_sample_no)
+            self.sample_query(q_sample_no,sender)
+        return True
+    
+    def on_header(record):
+        logging.info('header [%s]' % record)
+
+    def on_result(record):
+        logging.info('on results')
+
+    def on_unknown(record):
+        logging.debug('on_unknown()')
+
+    def on_header(record):
+        logging.debug('on_header()')
+                    
+    def open(self):
+        logging.debug('open()')
+        if self.connection_type == 'TCP':
+            while 1:
+                while 1:
+                    data = self.astm.conn.recv(BUFFER_SIZE)
+                    if not data: break
+                    logging.info("Data: [{}]".format(data))
+                    logging.info("data len [%s]" % str(len(data)))
+
+                    if data == ENQ:
+                        logging.info('<< ENQ')
+                        self.astm.send_ack()
+
+                    elif (data.startswith(STX) and data.endswith(CRLF)):
+                        logging.info('got data')
+                        self.astm.send_ack()
+                        logging.info('data [%s]' % data)
+                        self.message += data[2:-5].decode(ENCODING)
+                        logging.debug('message [%s]' % self.message)
+
+                    elif (data==EOT) or (data==EOT+ENQ):
+                        logging.info('Proses message [%s]' % self.message)
+                        self.handlemsg(self.message)
+                        self.message = ''                        
+                    else:
+                        self.astm.send_ack()
+                        
+                self.astm.conn.close()
+                logging.info('Socked closed. sleep 1s then restart listenning.')
+                time.sleep(1)
+        else:
+            logging.error('%s only support connection type TCP' % DRIVER_NAME)
+
+        # close db connection
+        self.my_conn.close()
+
+        sys.exit(0)

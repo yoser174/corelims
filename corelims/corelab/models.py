@@ -1424,6 +1424,45 @@ REF_OPERATOR = (
     ("<=", "LTE"),
 )
 
+EVENT_TYPE = ((0, "Unknown"), (1, "Inquery"))
+
+
+class InstrumentSamplePositions(models.Model):
+    instrument = models.ForeignKey(
+        Instruments,
+        on_delete=models.DO_NOTHING,
+        verbose_name=_("Instrument"),
+        related_name="instrumentsamplepositions_instrument",
+    )
+    sample = models.ForeignKey(
+        OrderSamples,
+        on_delete=models.PROTECT,
+        verbose_name=_("Order Sample"),
+        related_name="insttrumentsamplepositions_sample",
+        null=True,
+    )
+    sample_no_num = models.IntegerField
+    rack_id_num = models.IntegerField
+    rack_potition_num = models.IntegerField
+    rack_type_char = models.CharField
+    container_type_char = models.CharField
+    event_type = models.CharField(
+        max_length=3,
+        verbose_name=_("Event type"),
+        choices=EVENT_TYPE,
+        default="0",
+    )
+
+    instrument_time = CreationDateTimeField(
+        verbose_name=_("Instrument time at"), auto_now_add=True
+    )
+    dateofcreation = CreationDateTimeField(
+        verbose_name=_("Created at"), auto_now_add=True
+    )
+
+    def __str__(self):
+        return "%s %s" % (self.instrument, self.sample)
+
 
 class TestRefRanges(models.Model):
     DAY = "D"
@@ -2058,21 +2097,29 @@ class OrderExtended(models.Model):
 
     def get_progress(self):
         # ores = OrderResults.objects.filter(order=self.order,validation_status=0,is_header=0)
-        #return int(self.order.status) * 25
+        # return int(self.order.status) * 25
         # if order.status == 1:
         #    return 0
-        ores = OrderResults.objects.filter(order=self.order,validation_status=1,is_header=0)
-        if ores.count()>0:
-           return 25
-        ores = OrderResults.objects.filter(order=self.order,validation_status=2,is_header=0)
-        if ores.count()>0:
-           return 50
-        ores = OrderResults.objects.filter(order=self.order,validation_status=3,is_header=0)
-        if ores.count()>0:
-           return 75
-        ores = OrderResults.objects.filter(order=self.order,validation_status=4,is_header=0)
-        if ores.count()>0:
-           return 100
+        ores = OrderResults.objects.filter(
+            order=self.order, validation_status=1, is_header=0
+        )
+        if ores.count() > 0:
+            return 25
+        ores = OrderResults.objects.filter(
+            order=self.order, validation_status=2, is_header=0
+        )
+        if ores.count() > 0:
+            return 50
+        ores = OrderResults.objects.filter(
+            order=self.order, validation_status=3, is_header=0
+        )
+        if ores.count() > 0:
+            return 75
+        ores = OrderResults.objects.filter(
+            order=self.order, validation_status=4, is_header=0
+        )
+        if ores.count() > 0:
+            return 100
 
     def __str__(self):
         return "%s" % (self.order)

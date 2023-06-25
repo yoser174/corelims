@@ -2,6 +2,15 @@
 
 coreLIS is a Laboratory Information Management Systems
 
+# hardware requirement
+
+Server
+
+Client
+
+Barcode Printer
+Zebra Printer 
+
 # cara install
 
 1. install Python 3.6 64bit ke c:\python36

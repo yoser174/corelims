@@ -1,0 +1,42 @@
+MSH|^~\&|BC-5380|Mindray|||20080617143943||ORU^R01|1|P|2.3.1||||||UNICODE
+PID|1||7393670^^^^MR||Joan^Jlang||19900804000000|Female
+PV1|1||nk^^001
+OBR|1||20071207011|00001^Automated Count^99MRC||20080508140600|20080508150616|||Jhon||||20080508150000||||||||||HM||||||||Mindray
+OBX|1|IS|08001^Take Mode^99MRC||O||||||F
+OBX|2|IS|08002^Blood Mode^99MRC||W||||||F
+OBX|3|IS|08003^Test Mode^99MRC||CBC||||||F
+OBX|4|IS|01002^Ref Group^99MRC||Woman||||||F
+OBX|5|NM|30525-0^Age^LN||18|yr|||||F
+OBX|6|NM|6690-2^WBC^LN||9.81|10*9/L|4.00-10.00|N|||F|E
+OBX|7|NM|789-8^RBC^LN||4.53|10*12/L|3.50-5|N|||F
+
+
+
+
+MSH|$~&|LIS||||20080617143944||ACK^R01|1|P|2.3.1||||||UNICODE
+MSA|AA|1
+
+
+
+For V1.0 and V2.0 searching request messages, sample ID is used as the filter for searching
+MSH|^~\&|BC-6800|Mindray|||20081120174836||ORM^O01|4|P|2.3.1||||||UNICODE
+ORC|RF||SampleID1
+
+
+MSH|^~\&|BC-6800|Mindray|||20140909170111||ORR^O02||P|2.3.1||||||UNICODE<CR>
+MSA|AA|1<CR>
+PID|1||patientID2001^^^^MR||Jordan^Michael||20090210000000|Male<CR>
+PV1|1|Outpatient|Internal medicine^^1002|||||||||||||||||Public<CR>
+ORC|AF||SampleID4001<CR>
+OBR|1|SampleID4001||00001^Automated Count^99MRC||20090307103000||||Jack|||Virusinfections|20090307103100||||||||||HM||||||||<CR>
+OBX|1|IS|08003^Test Mode^99MRC||CBC+DIFF||||||F<CR>
+OBX|2|IS|01002^Ref Group^99MRC||Child||||||F<CR>
+OBX|3|NM|30525-0^Age^LN||6|yr|||||F<CR>
+OBX|4|ST|01001^Remark^99MRC||Emergency patient||||||F<CR>
+OBX|5|ST|08005^SerialNumber^99MRC||3||||||F<CR>
+OBX|6|IS|01007^Sample Type^99MRC||Venous blood||||||F<CR>
+OBX|7|IS|01008^Patient Area^99MRC||A - 501||||||F<CR>
+OBX|8|ST|01009^Custom patient info 1^99MRC||Nothing||||||F<CR>
+OBX|9|ST|01010^Custom patient info 2^99MRC||Nothing||||||F<CR>
+OBX|10|ST|01011^Custom patient info 3^99MRC||Nothing||||||F<CR>
+
