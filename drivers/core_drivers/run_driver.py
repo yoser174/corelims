@@ -23,7 +23,7 @@ VERSION = '0.0.3'
 
 DRIVER_LIST = ('BC6800','BC5000','BS480','ASTM1394',
                'MINDRAYBS','MISSIONU500','READER40','DF50',
-               'NOVAPHOX','BT3500','E411')
+               'NOVAPHOX','BT3500','E411','XL200')
 
 
 # default
@@ -41,6 +41,8 @@ from libs.analyzers.BT3500 import BT3500
 from libs.analyzers.NOVAPHOX import NOVAPHOX
 # Roche
 from libs.analyzers.E411 import E411
+# Erba
+from libs.analyzers.XL200 import XL200
 
 SERVER = '127.0.0.1'
 INSTRUMENT_CODE = '1'

@@ -9,6 +9,7 @@
 #   20190608    - fix jika SQL Script untuk convert hasil error, kembalikan aslinya ke awal
 #   20190713    - fix rule engine, dengan tambahkan str untuk hasil variabel
 #   20190720    - jika tidak terima nilai normal dari alat, maka generate dari master nilai normal
+#   20230708    - fix query python 3
 
 import logging
 import MySQLdb
@@ -16,7 +17,7 @@ from datetime import datetime
 import time,sys
 from dateutil.relativedelta import relativedelta
 
-VERSION  = '0.0.9'
+VERSION  = '0.0.10'
 
 
 class my_db(object):
@@ -329,14 +330,14 @@ corelab_ordersamples.sample_no = '{sample_no}'
             operator_value = ''
             ref_range_value = ''
             logging.info('ref reange not found, generate it.')
-            ref_range = self.my_select("select lower,upper,operator,operator_value,panic_lower,panic_upper from corelab_testrefranges where any_age = 1 and gender_id is null and  test_id =  "+str(test_id))
-            have_data = 0
-            try:
-                have_data = len(ref_range)
-            except:
-                pass
+            ref_range = self.my_select("select count(*) from corelab_testrefranges where any_age = 1 and gender_id is null and  test_id =  "+str(test_id))
+            have_data = False
+            if ref_range[0][0] > 0:
+                logging.info('have data')
+                have_data = True
+            ref_range = self.my_select("select lower,upper,operator,operator_value,panic_lower,panic_upper from corelab_testrefranges where any_age = 1 and gender_id is null and  test_id =  "+str(test_id))            
             logging.info(have_data)
-            if int(have_data)>0:
+            if have_data:
                 logging.info('got data for any age and gender null')
                 lower = ref_range[0][0]
                 upper = ref_range[0][1]
@@ -354,13 +355,13 @@ corelab_ordersamples.sample_no = '{sample_no}'
                 ref_range = ref_range_value
 
             else:
-                tmp_ref_range = self.my_select("select lower,upper,operator,operator_value,panic_lower,panic_upper,age_from,age_from_type,age_to,age_to_type from corelab_testrefranges where any_age = 0 and gender_id = "+gender_id+" and  test_id =  "+str(test_id))
-                have_data = 0
-                try:
-                    have_data = len(tmp_ref_range)
-                except:
-                    pass
-                if int(have_data)>0:
+                tmp_ref_range = self.my_select("select count(*) from corelab_testrefranges where any_age = 0 and gender_id = "+str(gender_id)+" and  test_id =  "+str(test_id))
+                have_data = False
+                if tmp_ref_range[0][0] > 0:
+                    logging.info('have data')
+                    have_data = True
+                tmp_ref_range = self.my_select("select lower,upper,operator,operator_value,panic_lower,panic_upper,age_from,age_from_type,age_to,age_to_type from corelab_testrefranges where any_age = 0 and gender_id = "+str(gender_id)+" and  test_id =  "+str(test_id))                
+                if have_data:
                     logging.info('cek maching ref_range based on gender and age..')
                     for ref_data in tmp_ref_range:
                         logging.info(ref_data)
@@ -471,17 +472,17 @@ corelab_ordersamples.sample_no = '{sample_no}'
     def get_mapping_code_attribut(self,instrument_id,tes_code):
         data = self.my_select(" SELECT id,test_code,result_selection,sql_script,instrument_id,test_id FROM corelab_instrumenttests where instrument_id = %s and test_code = '%s' " % (instrument_id,tes_code) )
         if len(data)>0:
-            return data[0]
+            return True,data[0]
         else:
             logging.warning("test_code [%s] for instrument_id [%s] not found." % (tes_code,instrument_id))
-            return 0
+            return False,0
         
 
     def insert_result(self,sample_no,tes_code,tes_result,tes_ref,tes_unit,tes_flag,instrument_id):
         last_insert_id = 0
         # result conversion
-        test_attr = self.get_mapping_code_attribut(instrument_id,tes_code)
-        if test_attr > 0 :
+        found,test_attr = self.get_mapping_code_attribut(instrument_id,tes_code)
+        if found :
             logging.info('found attribut test [%s]' % str(test_attr))
             # result conversion
             sql_script = str(test_attr[3]).strip()
