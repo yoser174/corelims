@@ -1,7 +1,7 @@
-""" Zybio hematology driver """
+""" AERC3 auto 3-Diff Hematology analyzer driver """
 # -*- coding: utf-8 -*-
 ###############################
-# ZYBIO
+# Mindray BC6800
 #
 # auth: Yoserizal
 # date: 17 Agustus 2023
@@ -39,7 +39,7 @@ from ..db.my_db import my_db
 # sys.setdefaultencoding('utf-8')
 
 
-DRIVER_NAME = "BC5000"
+DRIVER_NAME = "AERC3"
 DRIVER_VERSION = "0.0.1"
 
 SEND_ACK_MSG = False
@@ -74,7 +74,7 @@ MY_PASS = "connmw"
 MY_DB = "ciremai"
 
 
-class ZYBIO(object):
+class AERC3:
     def __init__(
         self,
         server,
@@ -92,8 +92,8 @@ class ZYBIO(object):
         tcp_port,
     ):
         self.message = ""
-        logging.info(DRIVER_NAME + " - " + DRIVER_VERSION + " loaded.")
-        logging.info("connection type: [%s]" % connection_type)
+        logging.info(f"{DRIVER_NAME}  -  {DRIVER_VERSION}  loaded.")
+        logging.info(f"connection type: [{connection_type}]")
         self.server = server
         MY_DB = db
         self.instrument_id = instrument_id
@@ -118,6 +118,7 @@ class ZYBIO(object):
         h = hl7.parse(message)
         message_type = str(h.segment("MSH")[9])
         msh10 = str(h.segment("MSH")[10])
+        logging.info(f"message type [{message_type}]")
 
         if message_type == "ORU^R01":
             logging.info("proses result patient..")
@@ -125,6 +126,7 @@ class ZYBIO(object):
             logging.info(f"Try parsing result [{sample_no}] and insert to DB..")
             try:
                 for obx in h["OBX"]:
+                    logging.info(obx)
                     tes_code = obx[3][0][1] or ""
                     tes_result = obx[5] or ""
                     tes_unit = obx[6] or ""
@@ -140,6 +142,7 @@ class ZYBIO(object):
                         self.instrument_id,
                     )
             except Exception as e:
+                logging.warning(e)
                 pass
 
             if SEND_ACK_MSG:
@@ -147,7 +150,7 @@ class ZYBIO(object):
 
                 ts = datetime.now().strftime("%Y%m%d%H%M%S")
                 ack_msg = (
-                    VT
+                    VT.decode(ENCODING)
                     + "MSH|$~&|LIS||||"
                     + str(ts)
                     + "||"
@@ -156,20 +159,22 @@ class ZYBIO(object):
                     + msh10
                     + "|P|2.3.1||||||UNICODE\r"
                 )
-                ack_msg += "MSA|AA|" + msh10 + "\r" + FS + CR
+                ack_msg += (
+                    "MSA|AA|" + msh10 + "\r" + FS.decode(ENCODING) + CR.decode(ENCODING)
+                )
 
                 logging.info(f"send ACK mesage >> {ack_msg}")
 
-                self.conn.send(ack_msg)
+                self.conn.send(ack_msg.encode(ENCODING))
 
-        elif message_type == "ORM^O01":
+        elif message_type == "QRY^Q02":
             logging.info("instrument query for sample, prepare message for reply..")
             # order request for sampel ID
             ts = datetime.now().strftime("%Y%m%d%H%M%S")
             send_application = str(h.segment("MSH")[3])
             send_facility = str(h.segment("MSH")[4])
             control_id = str(h.segment("MSH")[10])
-            sample_id = str(h.segment("ORC")[3])
+            sample_no = str(h.segment("QRD")[8])
 
             # get patient info
             (
@@ -180,53 +185,40 @@ class ZYBIO(object):
                 doctor,
                 diagnosis,
                 origin,
+                age_year,
             ) = self.my_conn.get_patient_id(sample_no)
+            if not pat_id:
+                logging.warning(f"sample_no [{sample_no}] not found!")
+                send_message = f"MSH|^~\&|||{send_application}|{send_facility}|{ts}||QCK^Q02|1|P|2.3.1||||||UNICODE||\rMSA|AA|1|Message Accepted|||0\rERR|0\rQAK|SR|NF\r"
+            else:
+                send_message = f"MSH|^~\&|{send_application}|{send_facility}|||{ts}||DSR^Q03|1|P|2.3.1||||||UNICODE||\rMSA|AA|1|Message Accepted|||0\r"
+                send_message += f"ERR|0\rQAK|SR|OK\rQRD|{ts}|R|D|1|||RD|{sample_no}|OTH|||T\rQRF|ES-480|{ts}|{ts}||RCT|COR|ALL|\r"
+                send_message += f"DSP|1||{pat_id}||\rDSP|2||bed_no||\rDSP|3||{name}||\rDSP|4||{dob}000000||\rDSP|{sex}||M||\rDSP|6||||\rDSP|7||||\rDSP|8||||\rDSP|9||||\rDSP|10||||\rDSP|11||||\rDSP|12||||\rDSP|13||||\rDSP|14||||\rDSP|15||{origin}||\r"
+                send_message += f"DSP|16||||\rDSP|17||own||\rDSP|18||||\rDSP|19||||\rDSP|20||||\rDSP|21||{sample_no}||\rDSP|22||||\rDSP|23||{ts}||\rDSP|24||N||\rDSP|26||serum||\rDSP|27||{doctor}||\rDSP|28||Dept1||\r"
+                # test no
+                tes_arr = self.my_conn.get_test_array(sample_no, self.instrument_id)
+                logging.info(tes_arr)
+                logging.info(f"test found [{tes_arr[0]}]")
+                tes_count = 29
+                for tes in tes_arr[1]:
+                    send_message += f"DSP|{tes_count}||{tes[0]}^^^||\r"
+                    tes_count += 1
+
             send_message = (
-                "MSH|^~\&|"
-                + send_application
-                + "|"
-                + send_facility
-                + "|||"
-                + str(ts)
-                + "||ORR^O02||P|2.3.1||||||UNICODE\r"
+                VT.decode(ENCODING)
+                + send_message
+                + FS.decode(ENCODING)
+                + CR.decode(ENCODING)
             )
-            send_message += "MSA|AA|" + control_id + "\r"
-            send_message += (
-                "PID|1||"
-                + pat_id
-                + "^^^^MR||"
-                + name
-                + "^"
-                + name
-                + "||"
-                + dob
-                + "|"
-                + sex
-                + "\r"
-            )
-            send_message += "PV1|1||" + origin + "^^|||||||||||||||||\r"
-            send_message += "ORC|AF||" + sample_id + "\r"
-            send_message += (
-                "OBR|1|"
-                + sample_no
-                + "||00001^Automated Count^99MRC||"
-                + str(ts)
-                + "||||||||"
-                + str(ts)
-                + "||||||||||HM||||||||\r"
-            )
-
-            send_message = VT + send_message + FS + CR
             logging.info(f"send message >>{send_message}")
-
-            self.conn.send(send_message)
+            self.conn.send(send_message.encode(ENCODING))
 
         else:
-            logging.info(f"Message unknown [{message_type}] : {message}")
+            logging.warning(f"Message unknown [{message_type}] : {message}")
             # proses send ACK
             ts = datetime.now().strftime("%Y%m%d%H%M%S")
             ack_msg = (
-                VT
+                VT.decode(ENCODING)
                 + "MSH|$~&|LIS||||"
                 + str(ts)
                 + "||"
@@ -235,11 +227,13 @@ class ZYBIO(object):
                 + msh10
                 + "|P|2.3.1||||||UNICODE\r"
             )
-            ack_msg += "MSA|AA|" + msh10 + "\r" + FS + CR
+            ack_msg += (
+                "MSA|AA|" + msh10 + "\r" + FS.decode(ENCODING) + CR.decode(ENCODING)
+            )
 
-            logging.info("send ACK mesage >> {ack_msg}")
+            logging.info(f"send ACK mesage >> {ack_msg}")
 
-            self.conn.send(ack_msg)
+            self.conn.send(ack_msg.encode(ENCODING))
 
     def open(self):
         if self.connection_type == "TCP":
@@ -290,7 +284,7 @@ class ZYBIO(object):
                 time.sleep(1)
 
         else:
-            logging.error("ZYBIO only support connection type TCP")
+            logging.error("ES20 only support connection type TCP")
 
         # close db connection
         self.my_conn.close()

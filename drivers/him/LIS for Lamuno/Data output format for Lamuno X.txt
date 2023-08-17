@@ -1,0 +1,31 @@
+The record structure show as below:
+(STX 02H)Title|Vision|
+Sample ID|
+Item number|
+Item Name 1 |Result|Unit|ref range|   
+Item Name 2 |Result|Unit|ref range|
+Item Name 3 |Result|Unit|ref range|
+YYYY-MM-DD|hh:mm:ss(ETX 03H)
+//==================================
+//eg.1// Single item
+Immunofluorescence Report|Version:V3(V3.3.62P)|
+0009|
+1|
+CRP|<1.0¡ý|pg/ml|1.0~10.0|
+2019-11-26|14:18:49
+//================================
+//eg.2//3 items
+//================================
+ Immunofluorescence Report|Version:V3(V3.3.62P)|
+0010|
+3|
+CRP|<1.0¡ý|ng/mg|<1.0|
+NCP|<1.0¡ý|ng/mg|<1.0|
+SAA|<1.0¡ý|ng/mg|<1.0|
+2019-11-26|14:11:49
+//=====================================
+
+Note£º
+1.Start with 0x02 end with 0x03£»
+2.Each item is separated by "|" (0x7c)£»
+3.The number of items determines the output combination of data£»

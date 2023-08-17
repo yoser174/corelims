@@ -1,3 +1,4 @@
+""" run_driver.py main driver app"""
 ###############################
 # run_driver.py
 #
@@ -10,7 +11,8 @@
 #   20190904 - exception if instrument code not found.
 
 from importlib import import_module
-import os, sys
+import os
+import sys
 import logging.config
 import configparser
 import yaml
@@ -43,6 +45,9 @@ from libs.analyzers.XL200 import XL200
 # Unknown
 from libs.analyzers.BW300 import BW300
 from libs.analyzers.ZYBIO import ZYBIO
+from libs.analyzers.ES20 import ES20
+from libs.analyzers.AERC3 import AERC3
+from libs.analyzers.CTKRAFIA import CTKRAFIA
 
 # from importlib import import_module
 
@@ -64,6 +69,9 @@ DRIVER_LIST = (
     "XL200",
     "BW300",
     "ZYBIO",
+    "ES20",
+    "AERC3",
+    "CTKRAFIA",
 )
 
 
