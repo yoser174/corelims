@@ -16,6 +16,7 @@ import sys
 import logging.config
 import configparser
 import yaml
+import argparse
 import MySQLdb
 
 
@@ -78,8 +79,28 @@ DRIVER_LIST = (
 SERVER = "127.0.0.1"
 INSTRUMENT_CODE = "1"
 
+parser = argparse.ArgumentParser()
+ 
+# Adding optional argument
+parser.add_argument("-i", "--ini_file", help = "config INI file",required=True)
+parser.add_argument("-l", "--log_file", help = "config log file",required=True)
+ 
+# Read arguments from command line
+args = parser.parse_args()
+ 
+
+
+ini_file = "run_driver.ini"
+log_file = "run_driver.yaml"
+
+if args.ini_file:
+    ini_file = args.ini_file
+if args.log_file:
+    log_file = args.log_file
+
+
 config = configparser.ConfigParser()
-config.read("run_driver.ini")
+config.read(ini_file)
 SERVER = config.get("General", "server")
 INSTRUMENT_CODE = config.get("General", "instrument_code")
 DB = config.get("General", "db")
@@ -186,7 +207,7 @@ WHERE code = '{code}'
 
 
 if __name__ == "__main__":
-    with open(file="run_driver.yaml", encoding="utf-8", mode="rt") as f:
+    with open(file=log_file, encoding="utf-8", mode="rt") as f:
         config = yaml.safe_load(f.read())
         logging.config.dictConfig(config)
     logging.info("starting core_drivers")
