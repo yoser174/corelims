@@ -11,7 +11,8 @@ from . import models, tables, forms, filters, query, report
 from braces.views import PermissionRequiredMixin, LoginRequiredMixin
 from django_tables2 import SingleTableView, RequestConfig
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
+from django.urls import reverse_lazy
 from django.db.models import Count
 from .tables import (
     TestGroupsTable,
@@ -30,13 +31,14 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from django.core.urlresolvers import reverse_lazy
+# from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse
 from extra_views.advanced import (
     UpdateWithInlinesView,
     NamedFormsetsMixin,
     CreateWithInlinesView,
-    InlineFormSet,
-    ModelFormMixin,
+    # InlineFormSet,
+    # ModelFormMixin,
 )
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from .custom.mixins import (
@@ -56,7 +58,7 @@ from django_tables2.export.export import TableExport
 import serial, time
 
 from datetime import datetime, timedelta, time
-from pyreportjasper import JasperPy
+from pyreportjasper import PyReportJasper as JasperPy
 
 from .utils import is_float
 from .labels import Label
@@ -96,7 +98,6 @@ from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP
 
 
 UPDATE = """
-
 """
 settings.UPDATE = UPDATE
 
@@ -115,7 +116,7 @@ class UpdateUserProfile(LoginRequiredMixin, NamedFormsetsMixin, UpdateWithInline
 def login_user(request):
     logout(request)
     next_url = request.GET.get("next", "")
-    request.session[translation.LANGUAGE_SESSION_KEY] = user_language
+    # request.session[translation.LANGUAGE_SESSION_KEY] = user_language
 
     if request.POST:
         username = request.POST.get("username", "")
@@ -968,8 +969,7 @@ def show_workarea_group(request, pk):
     # order_wa = models.OrderTests.objects.filter(test__test_group__in=test_group).values('order')
 
     order_wa = models.OrderResults.objects.filter(
-        test__test_group__in=test_group
-        # , validation_status__lte=3
+        test__test_group__in=test_group, validation_status__lte=3
     ).values("order")
 
     data = models.Orders.objects.filter(pk__in=order_wa)
@@ -1028,7 +1028,7 @@ def capture_workarea(request, area_pk):
 @login_required(login_url="login_billing")
 def show_workarea(request):
     workareas = models.Workarea.objects.all().order_by("sort")
-    order_wa = models.OrderResults.objects.values(
+    order_wa = models.OrderResults.objects.filter(validation_status__lte=3).values(
         "order"
     )
     data = models.Orders.objects.filter(pk__in=order_wa)
@@ -1127,7 +1127,7 @@ def workarea_order_results_history(request, order_pk, area_pk):
 
 @login_required(login_url="login_billing")
 def order_results_validate(request, pk):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         order_res = models.OrderResults.objects.filter(
             order_id=pk, validation_status=1
         ).update(
@@ -1140,7 +1140,7 @@ def order_results_validate(request, pk):
 
 @login_required(login_url="login_billing")
 def order_results_techval(request, pk):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         # create history
         tech_val = models.OrderResults.objects.filter(
             order_id=pk, validation_status=1
@@ -1172,7 +1172,7 @@ def order_results_techval(request, pk):
 
 @login_required(login_url="login_billing")
 def order_results_medval(request, pk):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         # create history
         med_val = models.OrderResults.objects.filter(
             order_id=pk, validation_status=2
@@ -1245,7 +1245,7 @@ def order_results_print_old(request, pk):
     oe.save()
 
     # set validation printed
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         order_res = models.OrderResults.objects.filter(
             order_id=pk, validation_status=3
         ).update(
@@ -1296,7 +1296,7 @@ def order_results_print(request, pk):
         oe.save()
 
         # set validation printed
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             order_res = models.OrderResults.objects.filter(
                 order_id=pk, validation_status=3
             ).update(
@@ -1353,7 +1353,7 @@ def order_results_print_wa(request, area_pk, order_pk):
         oe.save()
 
         # set validation printed
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             order_res = models.OrderResults.objects.filter(
                 order_id=order_pk, validation_status=3
             ).update(
@@ -1462,7 +1462,7 @@ def order_results(request, pk):
                         pass
 
                     if not cr_res_a == request.POST.get(p_tes, ""):
-                        if request.user.is_authenticated():
+                        if request.user.is_authenticated:
                             alfa_res = request.POST.get(p_tes, "")
                             o_result = models.Results(
                                 order=o_order, test=o_test, alfa_result=alfa_res
@@ -1787,7 +1787,7 @@ def complete_results(request, pk):
                         pass
 
                     if not cr_res_a == request.POST.get(p_tes, ""):
-                        if request.user.is_authenticated():
+                        if request.user.is_authenticated:
                             alfa_res = request.POST.get(p_tes, "")
                             o_result = models.Results(
                                 order=o_order, test=o_test, alfa_result=alfa_res
@@ -2110,7 +2110,7 @@ def order_results_wa(request, area_pk, order_pk):
                         pass
 
                     if not cr_res_a == request.POST.get(p_tes, ""):
-                        if request.user.is_authenticated():
+                        if request.user.is_authenticated:
                             alfa_res = request.POST.get(p_tes, "")
                             o_result = models.Results(
                                 order=o_order, test=o_test, alfa_result=alfa_res
@@ -3085,7 +3085,7 @@ def pbs_report(request, pk):
         oe.save()
 
         # set validation printed
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             order_res = models.OrderResults.objects.filter(
                 order_id=pk, validation_status=3
             ).update(
@@ -3141,7 +3141,7 @@ def mb_report(request, pk):
         oe.save()
 
         # set validation printed
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             order_res = models.OrderResults.objects.filter(
                 order_id=pk, validation_status=3
             ).update(

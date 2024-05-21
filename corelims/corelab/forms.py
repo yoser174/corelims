@@ -1,8 +1,8 @@
 # coding=utf-8
 from django.conf import settings
 from datetimewidget.widgets import DateWidget
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext
 from django import forms
 from crispy_forms.helper import FormHelper
 
@@ -79,11 +79,11 @@ class GroupedModelChoiceIterator(ModelChoiceIterator):
 
 
 class GroupedModelChoiceField(Grouped, ModelChoiceField):
-    choices = property(Grouped._get_choices, ModelChoiceField._set_choices)
+    choices = property(Grouped._get_choices, ModelChoiceField._get_choices)
 
 
 class GroupedModelMultiChoiceField(Grouped, ModelMultipleChoiceField):
-    choices = property(Grouped._get_choices, ModelMultipleChoiceField._set_choices)
+    choices = property(Grouped._get_choices, ModelMultipleChoiceField._get_choices)
 
 
 class TestGroupForm(forms.ModelForm):

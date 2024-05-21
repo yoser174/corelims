@@ -9,12 +9,14 @@ class JasperServer(object):
         username = settings.JASPER_USER
         password = settings.JASPER_PASS
         # token = base64.encodestring("%s:%s" % (username, password)).replace("\n", "")
-        token = (
-            base64.encodestring(("%s:%s" % (username, password)).encode())
-            .decode()
-            .strip()
-        )
-        return token
+        # token = (
+        #     base64.encodestring(("%s:%s" % (username, password)).encode())
+        #     .decode()
+        #     .strip()
+        # )
+        token = base64.b64encode(bytes(("%s:%s" % (username, password)), 'utf-8')) # bytes\
+        token_str = token.decode('utf-8') # convert bytes to string
+        return token_str
 
     def get_report(self, order_id, group_id):
         # print order_id

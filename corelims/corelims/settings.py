@@ -43,6 +43,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "corelab.apps.CorelabConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -64,7 +65,6 @@ INSTALLED_APPS = [
     "jquery",
     "dal",
     "dal_select2",
-    "corelab",
 ]
 
 MIDDLEWARE = [
@@ -96,6 +96,9 @@ TEMPLATES = [
                 "corelab.context_processors.app_name",
                 "corelab.context_processors.app_version",
             ],
+            'libraries': {
+                'staticfiles' : 'django.templatetags.static',
+            },
         },
     },
 ]
@@ -159,7 +162,7 @@ SELECT2_TRANSLATIONS = "en"
 
 LOGIN_URL_BILLING = "/billing/login"
 
-APP_NAME = "coreLIMS"
+APP_NAME = "corelims"
 VERSION = "0.0.2"
 
 RESULT_REPORT_FILE_HEADER = "LAB TEST"
@@ -171,4 +174,8 @@ JASPER_USER = "jasperadmin"
 JASPER_PASS = "jasperadmin"
 JASPER_REST = "http://127.0.0.1:8080/jasperserver/rest_v2/"
 
-DATE_INPUT_FORMATS = ("%d-%m-%Y", "%Y-%m-%d")
+DATE_INPUT_FORMATS = ("%d-%m-%Y","%Y-%m-%d")
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+XS_SHARING_ALLOWED_METHODS = ['POST','GET','OPTIONS', 'PUT', 'DELETE']

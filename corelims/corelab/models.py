@@ -3,9 +3,10 @@ from __future__ import unicode_literals
 from django.db import models
 from django.db.models import ExpressionWrapper, F, Sum, DecimalField
 from django.dispatch import receiver
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-from django.core.urlresolvers import reverse
+# from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf import settings
 from django_extensions.db.fields import CreationDateTimeField, ModificationDateTimeField
 from datetime import date
@@ -44,6 +45,7 @@ class Parameters(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -67,6 +69,7 @@ class Organizations(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -87,6 +90,7 @@ class Service(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -110,6 +114,7 @@ class Priority(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -133,6 +138,7 @@ class Insurance(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -156,6 +162,7 @@ class Doctors(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -179,6 +186,7 @@ class Origins(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -202,6 +210,7 @@ class Diagnosis(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -229,6 +238,7 @@ class Genders(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -268,6 +278,7 @@ class SuperGroups(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -276,7 +287,7 @@ class SuperGroups(models.Model):
     class Meta:
         verbose_name = _("Super group")
         verbose_name_plural = _("Super groups")
-        permissions = (("view_supergroups", "Can view supergroups"),)
+        # permissions = (("view_supergroups", "Can view supergroups"),)
         ordering = ["name"]
 
 
@@ -301,6 +312,7 @@ class TestGroups(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -312,7 +324,7 @@ class TestGroups(models.Model):
     class Meta:
         verbose_name = _("Test group")
         verbose_name_plural = _("Test groups")
-        permissions = (("view_testgroups", "Can view testgroups"),)
+        # permissions = (("view_testgroups", "Can view testgroups"),)
         ordering = ["name"]
 
 
@@ -327,6 +339,7 @@ class Workarea(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -335,7 +348,7 @@ class Workarea(models.Model):
     class Meta:
         verbose_name = _("Workarea")
         verbose_name_plural = _("Workareas")
-        permissions = (("view_workarea", "Can view worakarea"),)
+        # permissions = (("view_workarea", "Can view worakarea"),)
         ordering = ["name"]
 
 
@@ -363,6 +376,7 @@ class WorkareaTestGroups(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -371,7 +385,7 @@ class WorkareaTestGroups(models.Model):
     class Meta:
         verbose_name = _("Workareatestgroup")
         verbose_name_plural = _("Workareatestgroups")
-        permissions = (("view_workareatestgroups", "Can view workareatestgroups"),)
+        # permissions = (("view_workareatestgroups", "Can view workareatestgroups"),)
         ordering = ["sort"]
 
 
@@ -397,7 +411,7 @@ class Tests(models.Model):
         verbose_name=_("Test Group"),
         related_name="tests",
     )
-    parent = models.ForeignKey("self", blank=True, null=True, related_name="children")
+    parent = models.ForeignKey("self", blank=True, null=True, related_name="children",on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=100, verbose_name=_("Test Name"), null=True)
     result_type = models.CharField(
         max_length=3,
@@ -428,6 +442,7 @@ class Tests(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -439,7 +454,7 @@ class Tests(models.Model):
     class Meta:
         verbose_name = _("Test")
         verbose_name_plural = _("Tests")
-        permissions = (("view_tests", "Can view tests"),)
+        # permissions = (("view_tests", "Can view tests"),)
         ordering = ["test_group", "name"]
 
 
@@ -473,6 +488,7 @@ class TestPrices(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -485,7 +501,7 @@ class TestPrices(models.Model):
         # unique_together = ('test', 'priority',)
         verbose_name = _("Test price")
         verbose_name_plural = _("Test prices")
-        permissions = (("view_testprices", "Can view test prices"),)
+        # permissions = (("view_testprices", "Can view test prices"),)
         ordering = ["test", "priority"]
 
 
@@ -506,6 +522,7 @@ class Profile(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_tests(self):
@@ -540,10 +557,16 @@ class ProfileTests(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
-
+    
     def __str__(self):
         return "%s - %s" % (self.profile, self.test)
+        
+    class Meta:
+        verbose_name_plural = "Profile tests"
+        verbose_name = "Profile tests"
+    
 
 
 class Patients(models.Model):
@@ -594,6 +617,7 @@ class Patients(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -623,7 +647,7 @@ class Patients(models.Model):
     class Meta:
         verbose_name = _("Patient")
         verbose_name_plural = _("Patients")
-        permissions = (("view_patients", "Can view test patients"),)
+        # permissions = (("view_patients", "Can view test patients"),)
         ordering = ["patient_id", "name"]
 
 
@@ -643,6 +667,7 @@ class PatientComments(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -762,6 +787,7 @@ class Orders(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
     # objects = OrdersManager()
 
@@ -872,7 +898,7 @@ class Orders(models.Model):
     class Meta:
         verbose_name = _("Order")
         verbose_name_plural = _("Orders")
-        permissions = (("view_orders", "Can view orders"),)
+        # permissions = (("view_orders", "Can view orders"),)
         ordering = ["number", "origin"]
 
 
@@ -892,6 +918,7 @@ class OrderComments(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -936,6 +963,7 @@ class OrderTests(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -955,7 +983,7 @@ class OrderTests(models.Model):
     class Meta:
         verbose_name = _("Order test")
         verbose_name_plural = _("Order tests")
-        permissions = (("view_ordertests", "Can view order tests"),)
+        # permissions = (("view_ordertests", "Can view order tests"),)
         ordering = ["order", "test"]
 
 
@@ -982,6 +1010,7 @@ class OrderDiagnosis(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -993,7 +1022,7 @@ class OrderDiagnosis(models.Model):
     class Meta:
         verbose_name = _("Order diagnosis")
         verbose_name_plural = _("Order diagnosis")
-        permissions = (("view_ordertests", "Can view order tests"),)
+        # permissions = (("view_ordertests", "Can view order tests"),)
         ordering = ["order", "diagnosis"]
 
 
@@ -1037,6 +1066,7 @@ class OrderSamples(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -1048,7 +1078,7 @@ class OrderSamples(models.Model):
     class Meta:
         verbose_name = _("Order samples")
         verbose_name_plural = _("Order samples")
-        permissions = (("view_ordersamples", "Can view order samples"),)
+        # permissions = (("view_ordersamples", "Can view order samples"),)
         ordering = ["order", "sample_no"]
 
 
@@ -1066,10 +1096,17 @@ class RequestNewReasons(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
         return "%s" % (self.name)
+    
+    class Meta:
+        verbose_name_plural = "Request new reasons"
+        verbose_name = "Request new reasons"
+
+
 
 
 class OrderSampleLogs(models.Model):
@@ -1104,6 +1141,7 @@ class OrderSampleLogs(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -1127,6 +1165,7 @@ class LabelPrinters(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -1164,6 +1203,7 @@ class ReceivedSamples(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -1295,6 +1335,7 @@ class Instruments(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -1339,10 +1380,14 @@ class InstrumentTests(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
         return "%s %s" % (self.instrument, self.test)
+    class Meta:
+        verbose_name_plural = "Instrument tests"
+        verbose_name = "Instrment tests"
 
 
 class InstrumentFlags(models.Model):
@@ -1366,10 +1411,17 @@ class InstrumentFlags(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
+
+    class Meta:
+        verbose_name_plural = "Instrument flags"
+        verbose_name = "Instrment flags"
 
     def __str__(self):
         return "%s %s" % (self.instrument, self.flag_code)
+    
+    
 
 
 BATCH_STATUS = (
@@ -1409,6 +1461,7 @@ class InstrumentBatch(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -1423,45 +1476,6 @@ REF_OPERATOR = (
     ("<", "LT"),
     ("<=", "LTE"),
 )
-
-EVENT_TYPE = ((0, "Unknown"), (1, "Inquery"))
-
-
-class InstrumentSamplePositions(models.Model):
-    instrument = models.ForeignKey(
-        Instruments,
-        on_delete=models.DO_NOTHING,
-        verbose_name=_("Instrument"),
-        related_name="instrumentsamplepositions_instrument",
-    )
-    sample = models.ForeignKey(
-        OrderSamples,
-        on_delete=models.PROTECT,
-        verbose_name=_("Order Sample"),
-        related_name="insttrumentsamplepositions_sample",
-        null=True,
-    )
-    sample_no_num = models.IntegerField
-    rack_id_num = models.IntegerField
-    rack_potition_num = models.IntegerField
-    rack_type_char = models.CharField
-    container_type_char = models.CharField
-    event_type = models.CharField(
-        max_length=3,
-        verbose_name=_("Event type"),
-        choices=EVENT_TYPE,
-        default="0",
-    )
-
-    instrument_time = CreationDateTimeField(
-        verbose_name=_("Instrument time at"), auto_now_add=True
-    )
-    dateofcreation = CreationDateTimeField(
-        verbose_name=_("Created at"), auto_now_add=True
-    )
-
-    def __str__(self):
-        return "%s %s" % (self.instrument, self.sample)
 
 
 class TestRefRanges(models.Model):
@@ -1536,10 +1550,16 @@ class TestRefRanges(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
         return "%s" % (self.test)
+    class Meta:
+        verbose_name_plural = "Test ref ranges"
+        verbose_name = "Test ref ranges"
+    
+    
 
 
 class Results(models.Model):
@@ -1586,6 +1606,7 @@ class Results(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def is_number(self, s):
@@ -1866,6 +1887,12 @@ class Results(models.Model):
             self.alfa_result,
             self.text_result,
         )
+    class Meta:
+        verbose_name_plural = "Results"
+        verbose_name = "Results"
+
+
+    
 
 
 class ResultComments(models.Model):
@@ -1884,6 +1911,7 @@ class ResultComments(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -1915,6 +1943,7 @@ class ResultFlags(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -1946,7 +1975,12 @@ class TestParameters(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
+
+    class Meta:
+        verbose_name_plural = "Test parameters"
+        verbose_name = "Test parameters"
 
     def __str__(self):
         return "%s" % (self.test)
@@ -2013,6 +2047,7 @@ class OrderResults(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2037,6 +2072,9 @@ class OrderResults(models.Model):
             ("medval", "Medical validating result"),
             ("repeat", "Repeating result"),
         )
+        verbose_name_plural = "Result"
+        verbose_name = "Result"
+
 
 
 class HistoryOrders(models.Model):
@@ -2070,6 +2108,7 @@ class HistoryOrders(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2093,33 +2132,26 @@ class OrderExtended(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_progress(self):
         # ores = OrderResults.objects.filter(order=self.order,validation_status=0,is_header=0)
-        # return int(self.order.status) * 25
+        return int(self.order.status) * 25
         # if order.status == 1:
         #    return 0
-        ores = OrderResults.objects.filter(
-            order=self.order, validation_status=1, is_header=0
-        )
-        if ores.count() > 0:
-            return 25
-        ores = OrderResults.objects.filter(
-            order=self.order, validation_status=2, is_header=0
-        )
-        if ores.count() > 0:
-            return 50
-        ores = OrderResults.objects.filter(
-            order=self.order, validation_status=3, is_header=0
-        )
-        if ores.count() > 0:
-            return 75
-        ores = OrderResults.objects.filter(
-            order=self.order, validation_status=4, is_header=0
-        )
-        if ores.count() > 0:
-            return 100
+        # ores = OrderResults.objects.filter(order=self.order,validation_status=1,is_header=0)
+        # if ores.count()>0:
+        #    return 25
+        # ores = OrderResults.objects.filter(order=self.order,validation_status=2,is_header=0)
+        # if ores.count()>0:
+        #    return 50
+        # ores = OrderResults.objects.filter(order=self.order,validation_status=3,is_header=0)
+        # if ores.count()>0:
+        #    return 75
+        # ores = OrderResults.objects.filter(order=self.order,validation_status=4,is_header=0)
+        # if ores.count()>0:
+        #    return 100
 
     def __str__(self):
         return "%s" % (self.order)
@@ -2135,10 +2167,14 @@ class BatchGroups(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
         return "%s" % (self.name)
+    class Meta:
+        verbose_name_plural = "Batch groups"
+        verbose_name = "Batch groups"
 
 
 class BatchGroupTests(models.Model):
@@ -2162,6 +2198,7 @@ class BatchGroupTests(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2184,6 +2221,7 @@ class Worklists(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -2214,6 +2252,7 @@ class WorklistOrders(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
 
@@ -2238,6 +2277,7 @@ class WorklistTests(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2257,6 +2297,7 @@ class Hosts(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2290,6 +2331,7 @@ class Labels(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2299,7 +2341,7 @@ class Labels(models.Model):
 ###
 class Menus(models.Model):
     parent = models.ForeignKey(
-        "self", blank=True, null=True, related_name="menu_parent"
+        "self", blank=True, null=True, related_name="menu_parent",on_delete=models.DO_NOTHING
     )
     name = models.CharField(
         max_length=100, verbose_name=_("Test Name"), null=True, unique=True
@@ -2316,6 +2358,7 @@ class Menus(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2353,6 +2396,7 @@ class UserWorkareaFilter(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2392,6 +2436,7 @@ class MBResults(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2410,6 +2455,7 @@ class MBResultGroups(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2437,6 +2483,7 @@ class MBResultGroupItems(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2455,10 +2502,15 @@ class MBAntibioticFamilies(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
+
 
     def __str__(self):
         return "%s - %s" % (self.code, self.name)
+    class Meta:
+        verbose_name_plural = "Mb antibiotic families"
+        verbose_name = "Mb antibiotic families"
 
 
 class MBAntibiotics(models.Model):
@@ -2491,6 +2543,7 @@ class MBAntibiotics(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2509,7 +2562,12 @@ class MBAntibioticMethods(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
+
+    class Meta:
+        verbose_name_plural = "Mb antibiotic methods"
+        verbose_name = "Mb antibiotic methods"
 
     def __str__(self):
         return "%s - %s" % (self.code, self.name)
@@ -2545,7 +2603,9 @@ class MBAntibiograms(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
+    
 
     def __str__(self):
         return "%s - %s" % (self.code, self.name)
@@ -2571,6 +2631,7 @@ class MBAntibiogramAntibiotics(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2578,6 +2639,9 @@ class MBAntibiogramAntibiotics(models.Model):
 
     class Meta:
         unique_together = (("mb_antibiogram", "mb_antibiotic"),)
+    class Meta:
+        verbose_name_plural = "Mb antibiogram antibiotics"
+        verbose_name = "Mb antibiogram antibiotics"
 
 
 class MBCultureMedia(models.Model):
@@ -2603,6 +2667,7 @@ class MBCultureMedia(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2650,6 +2715,7 @@ class MBTests(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2676,6 +2742,7 @@ class MBTestCultureMedia(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2693,6 +2760,7 @@ class MBAnatomicLocation(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2721,6 +2789,7 @@ class MBResultHeader(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2749,6 +2818,7 @@ class MBResultDetail(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2800,6 +2870,7 @@ class MBResultDetailAntibiotics(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2824,6 +2895,7 @@ class MBOrderExtended(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -2844,10 +2916,14 @@ class BDGrupJenisDarah(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
         return "%s - %s" % (self.name, self.name)
+    class Meta:
+        verbose_name_plural = "Bd grup jenis darah"
+        verbose_name = "Bd grup jenis darah"
 
 
 class BDJenisDarah(models.Model):
@@ -2868,10 +2944,15 @@ class BDJenisDarah(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
         return "%s - %s" % (self.name, self.unit)
+    
+    class Meta:
+        verbose_name_plural = "Bd jenis darah"
+        verbose_name = "Bd jenis darah"
 
 
 BD_BLOOD_TYPE = (("A", "A"), ("B", "B"), ("O", "O"), ("AB", "AB"))
@@ -2974,6 +3055,7 @@ class BDPermintaanDarahHeader(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -3004,6 +3086,7 @@ class BDPermintaanDarahDetail(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -3050,6 +3133,7 @@ class BDDarahMasuk(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -3093,6 +3177,7 @@ class Vendor(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -3107,7 +3192,7 @@ class Vendor(models.Model):
     class Meta:
         verbose_name = _("Vendor")
         verbose_name_plural = _("Vendors")
-        permissions = (("view_vendor", "Can view vendors"),)
+        # permissions = (("view_vendor", "Can view vendors"),)
 
 
 class Supplier(models.Model):
@@ -3130,6 +3215,7 @@ class Supplier(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -3141,7 +3227,7 @@ class Supplier(models.Model):
     class Meta:
         verbose_name = _("Supplier")
         verbose_name_plural = _("Suppliers")
-        permissions = (("view_supplier", "Can view suppliers"),)
+        # permissions = (("view_supplier", "Can view suppliers"),)
 
 
 class TemperatureCondition(models.Model):
@@ -3178,6 +3264,7 @@ class ProductGroup(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __unicode__(self):
@@ -3251,6 +3338,7 @@ class Product(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -3265,7 +3353,7 @@ class Product(models.Model):
     class Meta:
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
-        permissions = (("view_product", "Can view products"),)
+        # permissions = (("view_product", "Can view products"),)
         ordering = ["name"]
 
 
@@ -3285,6 +3373,7 @@ class ProductLot(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -3296,7 +3385,7 @@ class ProductLot(models.Model):
     class Meta:
         verbose_name = _("Product Lot")
         verbose_name_plural = _("Product Lots")
-        permissions = (("view_productlot", "Can view product lots"),)
+        # permissions = (("view_productlot", "Can view product lots"),)
         ordering = ["product"]
 
 
@@ -3365,6 +3454,7 @@ class StockIn(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     @property
@@ -3417,7 +3507,7 @@ class StockIn(models.Model):
 
 
 class StockInLot(models.Model):
-    stock_in = models.ForeignKey(StockIn, related_name="_stockin_lot")
+    stock_in = models.ForeignKey(StockIn, related_name="_stockin_lot",on_delete=models.DO_NOTHING,)
     number = models.CharField(max_length=30, verbose_name=_("Lot number"), null=True)
     expired = models.DateField(verbose_name=_("Expired at"), null=True)
     dateofcreation = models.DateTimeField(
@@ -3432,6 +3522,7 @@ class StockInLot(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -3480,6 +3571,7 @@ class UsingProduct(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     lastmodifiedby = models.ForeignKey(
@@ -3488,6 +3580,7 @@ class UsingProduct(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def create_returningproduct(self, request):
@@ -3528,6 +3621,7 @@ class ReturningProduct(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_absolute_url(self):
@@ -3547,10 +3641,10 @@ class ReturningProduct(models.Model):
 
 class UserExtension(models.Model):
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, related_name="extension", verbose_name=_("Benutzer")
+        settings.AUTH_USER_MODEL, related_name="extension", verbose_name=_("Benutzer"),on_delete=models.DO_NOTHING,
     )
     location = models.OneToOneField(
-        Location, related_name="extension", verbose_name=_("Location")
+        Location, related_name="extension", verbose_name=_("Location"),on_delete=models.DO_NOTHING,
     )
     product_group = models.ManyToManyField(
         ProductGroup, verbose_name=_("Group product")
@@ -3603,6 +3697,7 @@ class Ordering(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def get_delivered(self):
@@ -3666,6 +3761,7 @@ class Closing(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -3698,6 +3794,7 @@ class ClosingStockIn(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -3736,6 +3833,7 @@ class ClosingUsingProduct(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -3762,6 +3860,7 @@ class PBSTest(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
@@ -3783,6 +3882,7 @@ class PBSResult(models.Model):
         blank=True,
         verbose_name=_("Last modified by"),
         null=True,
+        on_delete=models.DO_NOTHING,
     )
 
     def __str__(self):
