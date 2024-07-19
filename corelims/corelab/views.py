@@ -31,6 +31,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, reverse, get_object_or_404
+
 # from django.core.urlresolvers import reverse_lazy
 from django.urls import reverse
 from extra_views.advanced import (
@@ -519,6 +520,7 @@ def report_orders(request):
     context = {"report": report_content, "filter": filter}
     return render(request, template, context)
 
+
 @login_required(login_url="login_billing")
 def report_ordertests(request):
     template = "report/ordertests.html"
@@ -570,6 +572,7 @@ def report_ordertests(request):
 
     context = {"report": report_content, "filter": filter}
     return render(request, template, context)
+
 
 @login_required(login_url="login_billing")
 def report_tats(request):
@@ -2419,7 +2422,7 @@ def sample_receive(request):
         orderno = request.POST["orderno"]
         orderno = str(orderno).strip()  # clean
         order = models.Orders.objects.filter(number=orderno)
-        samples = models.OrderSamples.objects.filter(order=order)
+        samples = models.OrderSamples.objects.filter(order__in=order)
         for par in request.POST:
             if par == "getsample":
                 get_sample = True
