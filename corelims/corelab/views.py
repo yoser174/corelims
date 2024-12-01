@@ -1,11 +1,29 @@
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from django.template.response import TemplateResponse
-from django.utils.translation import activate
 from django.utils import timezone
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+
+
+from django.contrib.auth.models import User
+from rest_framework import generics, viewsets
+from rest_framework import filters as resfilters
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+from .serializers import (
+    OrdersSerializer,
+    PatientsSerializer,
+    OriginsSerializer,
+    DoctorsSerializer,
+    ResultsSerializer,
+    InsuranceSerializer,
+)
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_200_OK
+
 
 from . import models, tables, forms, filters, query, report
 from braces.views import PermissionRequiredMixin, LoginRequiredMixin
@@ -28,11 +46,9 @@ from .tables import (
     InstrumentBachModeTable,
 )
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect, reverse, get_object_or_404
+from django.shortcuts import redirect
 # from django.core.urlresolvers import reverse_lazy
-from django.urls import reverse
 from extra_views.advanced import (
     UpdateWithInlinesView,
     NamedFormsetsMixin,
@@ -40,7 +56,7 @@ from extra_views.advanced import (
     # InlineFormSet,
     # ModelFormMixin,
 )
-from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import DeleteView, DetailView
 from .custom.mixins import (
     UpdateWithInlinesAndModifiedByMixin,
     CreateWithInlinesAndModifiedByMixin,
@@ -51,13 +67,8 @@ from avatar.models import Avatar
 from avatar.signals import avatar_updated
 from avatar.utils import invalidate_cache
 import datetime
-from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.dateformat import DateFormat
-from django_tables2.config import RequestConfig
 from django_tables2.export.export import TableExport
-import serial, time
-
-from datetime import datetime, timedelta, time
 from pyreportjasper import PyReportJasper as JasperPy
 
 from .utils import is_float
@@ -72,29 +83,6 @@ user_language = "id"
 translation.activate(user_language)
 # request.session[translation.LANGUAGE_SESSION_KEY] = user_language
 
-import django_filters.rest_framework
-
-from django.contrib.auth.models import User, Group
-from rest_framework import generics, viewsets
-from rest_framework import filters as resfilters
-from rest_framework.views import APIView
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
-from .serializers import (
-    OrdersSerializer,
-    PatientsSerializer,
-    OriginsSerializer,
-    DoctorsSerializer,
-    ResultsSerializer,
-    InsuranceSerializer,
-)
-
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_200_OK
 
 
 UPDATE = """
@@ -263,10 +251,6 @@ def patient_print_bill(request, pk):
     detail = query.medical_service_dtl(pk, filter_sql)
     total = query.medical_service_dtl_total(pk, filter_sql)
 
-    org_lab_name = models.Parameters.objects.filter(name="ORG_LAB_NAME")
-    org_lab_address = models.Parameters.objects.filter(name="ORG_LAB_ADDRESS")
-    org_lab_city = models.Parameters.objects.filter(name="ORG_LAB_CITY")
-
     template = "corelab/patient_print_bill.html"
     context = {
         "date": timezone.now().date(),
@@ -308,7 +292,6 @@ def patient_trans_history(request, pk):
 
 @login_required(login_url="login_billing")
 def patient_trans_history_perview(request, pk):
-    template = "report/orders.html"
     data = models.OrderTests.objects.filter(order__patient_id=pk)
     today = timezone.now().date()
 
@@ -329,7 +312,7 @@ def patient_trans_history_perview(request, pk):
         end_date = today
 
     data = data.filter(order__order_date__range=[start_date, end_date])
-    filter = filters.PatTransHistFilter(request.GET, queryset=data)
+    filters.PatTransHistFilter(request.GET, queryset=data)
     res_rep = report.JasperServer()
     b_ok, content = res_rep.get_patient_trans_history(
         start_date, end_date, output, patient_id=pk
@@ -732,7 +715,6 @@ def create_order_from_patient(request, patient_pk):
 
 @login_required(login_url="login_billing")
 def order_print_receipt(request, order_pk):
-    report_content = ""
     res_rep = report.JasperServer()
     b_ok, content = res_rep.get_report_order(order_pk, "order_receipt", "html")
     if b_ok:
@@ -761,7 +743,6 @@ def order_print_receipt_old(request, order_pk):
 
 @login_required(login_url="login_billing")
 def order_print_bill(request, order_pk):
-    report_content = ""
     res_rep = report.JasperServer()
     b_ok, content = res_rep.get_report_order(order_pk, "order_bill", "html")
     if b_ok:
@@ -807,9 +788,6 @@ def order_print_worklist(request, order_pk):
 @login_required(login_url="login_billing")
 def order_print_barcode(request, order_pk):
     order = models.Orders.objects.get(pk=order_pk)
-
-    MESSAGE_TAGS = {messages.ERROR: "danger"}
-
     printer_id = request.GET.get("printer")
 
     p_label = Label()
@@ -840,7 +818,6 @@ def order_sample_label(request):
     request_new_data = models.RequestNewReasons.objects.all()
     label_printer = models.LabelPrinters.objects.filter(active=True)
 
-    MESSAGE_TAGS = {messages.ERROR: "danger"}
 
     printer_id = request.GET.get("printer")
 
@@ -886,8 +863,6 @@ def worklist_print(request, pk):
         "org_lab_city": org_lab_city,
     }
     return render(request, template, context)
-
-    return redirect("order_detail", pk=order.pk)
 
 
 @login_required(login_url="login_billing")
@@ -1013,7 +988,7 @@ def capture_workarea(request, area_pk):
         b_def = False
         if request.POST.get("default", "") == "on":
             # update to false default other filter
-            usewa_def = models.UserWorkareaFilter.objects.filter(
+            models.UserWorkareaFilter.objects.filter(
                 user=request.user
             ).update(default=False)
             b_def = True
@@ -1128,7 +1103,7 @@ def workarea_order_results_history(request, order_pk, area_pk):
 @login_required(login_url="login_billing")
 def order_results_validate(request, pk):
     if request.user.is_authenticated:
-        order_res = models.OrderResults.objects.filter(
+        models.OrderResults.objects.filter(
             order_id=pk, validation_status=1
         ).update(
             validation_status=2,
@@ -1160,7 +1135,7 @@ def order_results_techval(request, pk):
             his_order.save()
 
         # update
-        order_res = models.OrderResults.objects.filter(
+        models.OrderResults.objects.filter(
             order_id=pk, validation_status=1
         ).update(
             validation_status=2,
@@ -1190,7 +1165,7 @@ def order_results_medval(request, pk):
                 action_text=act_txt,
             )
             his_order.save()
-        order_res = models.OrderResults.objects.filter(
+        models.OrderResults.objects.filter(
             order_id=pk, validation_status=2
         ).update(
             validation_status=3,
@@ -1246,7 +1221,7 @@ def order_results_print_old(request, pk):
 
     # set validation printed
     if request.user.is_authenticated:
-        order_res = models.OrderResults.objects.filter(
+        models.OrderResults.objects.filter(
             order_id=pk, validation_status=3
         ).update(
             validation_status=4, print_user=str(request.user), print_date=timezone.now()
@@ -1263,15 +1238,8 @@ def order_results_print(request, pk):
 
     group_id = request.GET.get("group_id")
 
-    input_file_header = settings.RESULT_REPORT_FILE_HEADER
-    input_file_footer = settings.RESULT_REPORT_FILE_FOOTER
-    input_file_main = settings.RESULT_REPORT_FILE_MAIN
-    input_file = settings.RESULT_REPORT_FILE
-
     ts = datetime.today().strftime("%Y%m%d%H%M%S")
-    parameters = {"ORDER_ID": pk}
     output = settings.MEDIA_ROOT + "\\report\\" + str(order.number) + "_" + ts + ".pdf"
-    con = settings.JASPER_CONN
 
     res_rep = report.JasperServer()
 
@@ -1297,7 +1265,7 @@ def order_results_print(request, pk):
 
         # set validation printed
         if request.user.is_authenticated:
-            order_res = models.OrderResults.objects.filter(
+            models.OrderResults.objects.filter(
                 order_id=pk, validation_status=3
             ).update(
                 validation_status=4,
@@ -1318,17 +1286,9 @@ def order_results_print_wa(request, area_pk, order_pk):
 
     group_id = request.GET.get("group_id")
 
-    # print group_id
-
-    input_file_header = settings.RESULT_REPORT_FILE_HEADER
-    input_file_footer = settings.RESULT_REPORT_FILE_FOOTER
-    input_file_main = settings.RESULT_REPORT_FILE_MAIN
-    input_file = settings.RESULT_REPORT_FILE
 
     ts = datetime.today().strftime("%Y%m%d%H%M%S")
-    parameters = {"ORDER_ID": order_pk}
     output = settings.MEDIA_ROOT + "\\report\\" + str(order.number) + "_" + ts + ".pdf"
-    con = settings.JASPER_CONN
 
     res_rep = report.JasperServer()
 
@@ -1354,7 +1314,7 @@ def order_results_print_wa(request, area_pk, order_pk):
 
         # set validation printed
         if request.user.is_authenticated:
-            order_res = models.OrderResults.objects.filter(
+            models.OrderResults.objects.filter(
                 order_id=order_pk, validation_status=3
             ).update(
                 validation_status=4,
@@ -2419,7 +2379,8 @@ def sample_receive(request):
         orderno = request.POST["orderno"]
         orderno = str(orderno).strip()  # clean
         order = models.Orders.objects.filter(number=orderno)
-        samples = models.OrderSamples.objects.filter(order=order)
+        orderObj = models.Orders.objects.get(number=orderno)
+        samples = models.OrderSamples.objects.filter(order=orderObj)
         for par in request.POST:
             if par == "getsample":
                 get_sample = True

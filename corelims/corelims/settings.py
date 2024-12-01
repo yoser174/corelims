@@ -43,6 +43,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "api.apps.ApiConfig",
     "corelab.apps.CorelabConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "rest_framework.authtoken",
     "rest_framework",
+    "corsheaders",
     "bootstrap3",
     "fontawesome_5",
     "avatar",
@@ -76,6 +78,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.locale.LocaleMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "corelims.urls"
@@ -175,6 +178,10 @@ JASPER_PASS = "jasperadmin"
 JASPER_REST = "http://127.0.0.1:8080/jasperserver/rest_v2/"
 
 DATE_INPUT_FORMATS = ("%d-%m-%Y","%Y-%m-%d")
+
+CORS_ORIGIN_WHITELIST = [
+     'http://localhost:3000'
+]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 

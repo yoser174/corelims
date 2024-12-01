@@ -2,6 +2,11 @@
 
 coreLIS is a Laboratory Information Management Systems
 
+DEMO:
+http://corelims.xyz
+user: lab
+pass: lab
+
 # hardware requirement
 
 Server
