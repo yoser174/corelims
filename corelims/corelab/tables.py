@@ -2,6 +2,7 @@ import django_tables2 as tables
 from pprint import pprint
 
 from .models import (
+    QualityControl,
     TestGroups,
     Tests,
     Orders,
@@ -456,3 +457,23 @@ class InstrumentBachTable(tables.Table):
             "note",
         )
         order_by = ("order_sample",)
+
+class QualityControlTable(tables.Table):
+    edit_order = IncludeColumn(
+        "includes/worklist_row_edit_toolbar.html",
+        attrs={"th": {"width": "120px"}},
+        verbose_name=" ",
+        orderable=False,
+    )
+
+    class Meta:
+        model = QualityControl
+        fields = (
+            "id",
+            "instrument",
+            # "batch_date",
+            # "batch_group",
+            # "lastmodifiedby",
+            # "lastmodification",
+        )
+        order_by = ("-id",)

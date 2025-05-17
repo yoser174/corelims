@@ -187,6 +187,10 @@
                           {% endif %}
                           
                       </ul>
+                    <ul class="sub">
+                        {% if perms.corelism.view_orders %} <li {% if  '/quality_control/' in request.path %} class="active"{% endif %} >
+                        <a href="/quality_control/">{% trans "Quality control" %}</a></li>{% endif %}
+                    </ul>
                       <ul class="sub">
                           {% if perms.corelism.view_orders %} <li {% if  '/complete/' in request.path %} class="active"{% endif %} >
                           <a href="/complete/">{% trans "Complete orders" %}</a></li>{% endif %}

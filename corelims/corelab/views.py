@@ -33,6 +33,7 @@ from django.utils.translation import gettext_lazy as _
 from django.urls import reverse_lazy
 from django.db.models import Count
 from .tables import (
+    QualityControlTable,
     TestGroupsTable,
     PatientsTable,
     SelectPatientsTable,
@@ -2934,13 +2935,40 @@ class ListWorklists(
     LoginRequiredMixin, PermissionRequiredMixin, FilteredSingleTableView
 ):
     model = models.Worklists
-    permission_required = "corelism.view_wokrlists"
+    permission_required = "corelism.view_worklists"
     login_url = settings.LOGIN_URL_BILLING
     table_class = WorklistTable
     table_data = models.Worklists.objects.all()
     context_table_name = "worklisttable"
     filter_class = filters.WorklistFilter
     # table_pagination = 10
+    
+class QualityControl(
+    LoginRequiredMixin, PermissionRequiredMixin, FilteredSingleTableView
+):
+    model = models.QualityControl
+    permission_required = "corelism.view_qualitycontrol"
+    login_url = settings.LOGIN_URL_BILLING
+    table_class = QualityControlTable
+    table_data = models.Worklists.objects.all()
+    context_table_name = "qualitycontroltable"
+    filter_class = filters.WorklistFilter
+
+class CreateQualityControl(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    NamedFormsetsMixin,
+    CreateWithInlinesAndModifiedByMixin,
+):
+    model = models.QualityControl
+    permission_required = "corelism.add_qualitycontrol"
+    login_url = settings.LOGIN_URL_BILLING
+    fields = ["instrument","instrument_test"]
+    success_url = reverse_lazy("qualitycontrol_list")
+
+    def form_valid(self, form):
+        form.lastmodifiedby = self.request.user
+        return super().form_valid(form)
 
 
 class CreateWorklist(

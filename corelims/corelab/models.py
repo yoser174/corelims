@@ -1563,11 +1563,13 @@ class TestRefRanges(models.Model):
 
 
 class Results(models.Model):
+    type =models.CharField(default='R',max_length=1) # R: Result , Q: QC
     order = models.ForeignKey(
         Orders,
         on_delete=models.PROTECT,
         verbose_name=_("Order"),
         related_name="results_order",
+        null=True
     )
     test = models.ForeignKey(
         Tests,
@@ -2401,6 +2403,31 @@ class UserWorkareaFilter(models.Model):
 
     def __str__(self):
         return "%s - %s - %s" % (self.user, self.workarea, self.name)
+
+
+class QualityControl(models.Model):
+    instrument = models.ForeignKey(Instruments,on_delete=models.DO_NOTHING)
+    instrument_test = models.ForeignKey(InstrumentTests,on_delete=models.DO_NOTHING)    
+    result = models.ForeignKey(
+        Results,
+        on_delete=models.PROTECT,
+        verbose_name=_("Result"),
+        related_name="quality_control_result",
+        null=True,
+    )
+    
+    lastmodification = ModificationDateTimeField(verbose_name=_("Last modified"))
+    lastmodifiedby = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        limit_choices_to={"is_staff": True},
+        blank=True,
+        verbose_name=_("Last modified by"),
+        null=True,
+        on_delete=models.DO_NOTHING,
+    )
+
+    def __str__(self):
+        return "%s - %s: %s" % (self.instrument, self.test,self.result)
 
 
 #################################### MIKROBIOLOGI #######################

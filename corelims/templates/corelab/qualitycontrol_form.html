@@ -1,0 +1,56 @@
+{% extends "base/form_view_base_billing.html" %}
+{% load i18n bootstrap3 %}
+
+{% block meta_title %}
+    {% trans "Quality control" %}
+    {{ qualitycontrol.id }}
+{% endblock %}
+
+{% block title %}
+    {% trans "Orders" %}
+{% endblock %}
+
+{% block breadcrumb_menu %}
+    <li class="active"><a href="{% url 'quality_control' %}">{% trans "Quality control" %}</a></li>
+    <li class="active">{% if orders %}{% trans "Edit batch" %}{% else %}{% trans "Entry" %}{% endif%} </li>
+{% endblock %}
+
+{% block main_header %}
+    {% if orders %}{% trans "Edit result" %}{% else %}{% trans "Entry" %}{% endif%}
+    <br>{{ orders.number }} <br>{{ orders.patient.name }}
+{% endblock %}
+
+{% block main_toolbar %}
+    <button type='submit' class='btn btn-primary'>
+        {% trans "Save" %}
+    </button>
+
+    <button type="button" class="btn btn-default"
+            onclick="window.location.assign('{% url 'quality_control' %}')">
+        {% trans "Cancel" %}
+    </button>
+{% endblock %}
+
+{% block extra_css %}
+{{ form.media.css }}
+{% endblock %}
+    
+{% block extra_js %}
+{{ form.media.js }}
+{% endblock %}
+    
+
+{% block main_inner %}
+    {% bootstrap_form form layout='horizontal' %}
+{% endblock %}
+
+{% block main_footer %}
+    <button type='submit' class='btn btn-primary'>
+        {% trans "Save" %}
+    </button>
+
+    <button type="button" class="btn btn-default"
+            onclick="window.location.assign('{% url 'quality_control' %}')">
+        {% trans "Cancel" %}
+    </button>
+{% endblock %}

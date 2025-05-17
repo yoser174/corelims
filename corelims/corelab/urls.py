@@ -93,6 +93,12 @@ urlpatterns = [
     re_path(r'^worklists/detail/(?P<pk>\d+)/print$', views.worklist_print, name='worklist_print'),
     
     #################
+    # Quality control
+    #################
+    re_path(r'^quality_control/$', views.QualityControl.as_view(), name='quality_control'),
+    re_path(r'^quality_control/create/$', views.CreateQualityControl.as_view(), name='qualitycontrol_create'),
+    
+    #################
     # Order Results
     #################
     re_path(r'^workarea/$', views.show_workarea, name='workarea'),
