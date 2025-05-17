@@ -458,22 +458,21 @@ class InstrumentBachTable(tables.Table):
         )
         order_by = ("order_sample",)
 
+
 class QualityControlTable(tables.Table):
-    edit_order = IncludeColumn(
-        "includes/worklist_row_edit_toolbar.html",
-        attrs={"th": {"width": "120px"}},
-        verbose_name=" ",
-        orderable=False,
-    )
+    # edit_order = IncludeColumn(
+    #     "includes/worklist_row_edit_toolbar.html",
+    #     attrs={"th": {"width": "120px"}},
+    #     verbose_name=" ",
+    #     orderable=False,
+    # )
 
     class Meta:
         model = QualityControl
         fields = (
-            "id",
             "instrument",
-            # "batch_date",
-            # "batch_group",
-            # "lastmodifiedby",
-            # "lastmodification",
+            "instrument_test.test.name",
+            "result.numeric_result",
+            "result.lastmodification",
         )
         order_by = ("-id",)

@@ -49,6 +49,7 @@ from .tables import (
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
+
 # from django.core.urlresolvers import reverse_lazy
 from extra_views.advanced import (
     UpdateWithInlinesView,
@@ -83,7 +84,6 @@ from django.utils import translation
 user_language = "id"
 translation.activate(user_language)
 # request.session[translation.LANGUAGE_SESSION_KEY] = user_language
-
 
 
 UPDATE = """
@@ -503,6 +503,7 @@ def report_orders(request):
     context = {"report": report_content, "filter": filter}
     return render(request, template, context)
 
+
 @login_required(login_url="login_billing")
 def report_ordertests(request):
     template = "report/ordertests.html"
@@ -554,6 +555,7 @@ def report_ordertests(request):
 
     context = {"report": report_content, "filter": filter}
     return render(request, template, context)
+
 
 @login_required(login_url="login_billing")
 def report_tats(request):
@@ -819,7 +821,6 @@ def order_sample_label(request):
     request_new_data = models.RequestNewReasons.objects.all()
     label_printer = models.LabelPrinters.objects.filter(active=True)
 
-
     printer_id = request.GET.get("printer")
 
     p_label = Label()
@@ -989,9 +990,9 @@ def capture_workarea(request, area_pk):
         b_def = False
         if request.POST.get("default", "") == "on":
             # update to false default other filter
-            models.UserWorkareaFilter.objects.filter(
-                user=request.user
-            ).update(default=False)
+            models.UserWorkareaFilter.objects.filter(user=request.user).update(
+                default=False
+            )
             b_def = True
 
         userwa.default = b_def
@@ -1104,9 +1105,7 @@ def workarea_order_results_history(request, order_pk, area_pk):
 @login_required(login_url="login_billing")
 def order_results_validate(request, pk):
     if request.user.is_authenticated:
-        models.OrderResults.objects.filter(
-            order_id=pk, validation_status=1
-        ).update(
+        models.OrderResults.objects.filter(order_id=pk, validation_status=1).update(
             validation_status=2,
             validation_user=str(request.user),
             validation_date=timezone.now(),
@@ -1136,9 +1135,7 @@ def order_results_techval(request, pk):
             his_order.save()
 
         # update
-        models.OrderResults.objects.filter(
-            order_id=pk, validation_status=1
-        ).update(
+        models.OrderResults.objects.filter(order_id=pk, validation_status=1).update(
             validation_status=2,
             techval_user=str(request.user),
             techval_date=timezone.now(),
@@ -1166,9 +1163,7 @@ def order_results_medval(request, pk):
                 action_text=act_txt,
             )
             his_order.save()
-        models.OrderResults.objects.filter(
-            order_id=pk, validation_status=2
-        ).update(
+        models.OrderResults.objects.filter(order_id=pk, validation_status=2).update(
             validation_status=3,
             medval_user=str(request.user),
             medval_date=timezone.now(),
@@ -1222,9 +1217,7 @@ def order_results_print_old(request, pk):
 
     # set validation printed
     if request.user.is_authenticated:
-        models.OrderResults.objects.filter(
-            order_id=pk, validation_status=3
-        ).update(
+        models.OrderResults.objects.filter(order_id=pk, validation_status=3).update(
             validation_status=4, print_user=str(request.user), print_date=timezone.now()
         )
 
@@ -1266,9 +1259,7 @@ def order_results_print(request, pk):
 
         # set validation printed
         if request.user.is_authenticated:
-            models.OrderResults.objects.filter(
-                order_id=pk, validation_status=3
-            ).update(
+            models.OrderResults.objects.filter(order_id=pk, validation_status=3).update(
                 validation_status=4,
                 print_user=str(request.user),
                 print_date=timezone.now(),
@@ -1286,7 +1277,6 @@ def order_results_print_wa(request, area_pk, order_pk):
     order = models.Orders.objects.get(pk=order_pk)
 
     group_id = request.GET.get("group_id")
-
 
     ts = datetime.today().strftime("%Y%m%d%H%M%S")
     output = settings.MEDIA_ROOT + "\\report\\" + str(order.number) + "_" + ts + ".pdf"
@@ -2942,7 +2932,8 @@ class ListWorklists(
     context_table_name = "worklisttable"
     filter_class = filters.WorklistFilter
     # table_pagination = 10
-    
+
+
 class QualityControl(
     LoginRequiredMixin, PermissionRequiredMixin, FilteredSingleTableView
 ):
@@ -2950,9 +2941,10 @@ class QualityControl(
     permission_required = "corelism.view_qualitycontrol"
     login_url = settings.LOGIN_URL_BILLING
     table_class = QualityControlTable
-    table_data = models.Worklists.objects.all()
+    table_data = models.QualityControl.objects.all()
     context_table_name = "qualitycontroltable"
     filter_class = filters.WorklistFilter
+
 
 class CreateQualityControl(
     LoginRequiredMixin,
@@ -2963,7 +2955,7 @@ class CreateQualityControl(
     model = models.QualityControl
     permission_required = "corelism.add_qualitycontrol"
     login_url = settings.LOGIN_URL_BILLING
-    fields = ["instrument","instrument_test"]
+    fields = ["instrument", "instrument_test"]
     success_url = reverse_lazy("qualitycontrol_list")
 
     def form_valid(self, form):
@@ -3223,3 +3215,8 @@ def json_sample_receive(request, order_pk):
                 l_os["status_display"] = value
                 l_os["log"] = wa_status.order_sample_log(l_os["id"])
     return JsonResponse({"results": list(order_sample)})
+
+
+def qc_data(request):
+    data = list(QualityControl.objects.values())  # Fetch data from the model
+    return JsonResponse(data, safe=False)

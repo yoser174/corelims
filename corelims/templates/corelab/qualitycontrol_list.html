@@ -84,6 +84,7 @@
         </div>
   
   
+        
  <script type="text/javascript">
  $('input[name="order_date"]').daterangepicker({locale: {
       format: 'YYYY-MM-DD'
@@ -93,6 +94,40 @@
   console.log(picker.endDate.format('YYYY-MM-DD'));
 });
  </script>
+
+
+
+ <div>
+  <canvas id="myChart"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['1 Juni', '2 Juni', '3 juni', '4 juni', '5 juni', '8 juni'],
+      datasets: [{
+        label: 'QC Results',
+        data: [12, 19, 3, 5, 2, 3],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: false
+        }
+      }
+    }
+  });
+</script>
+
+ 
+
+ 
 
     {% render_table qualitycontroltable "tables2/bootstrapped-tables2.html" %}
 {% endblock %}

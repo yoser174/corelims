@@ -5,6 +5,7 @@ from django.db.models import ExpressionWrapper, F, Sum, DecimalField
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+
 # from django.core.urlresolvers import reverse
 from django.urls import reverse
 from django.conf import settings
@@ -411,7 +412,13 @@ class Tests(models.Model):
         verbose_name=_("Test Group"),
         related_name="tests",
     )
-    parent = models.ForeignKey("self", blank=True, null=True, related_name="children",on_delete=models.DO_NOTHING)
+    parent = models.ForeignKey(
+        "self",
+        blank=True,
+        null=True,
+        related_name="children",
+        on_delete=models.DO_NOTHING,
+    )
     name = models.CharField(max_length=100, verbose_name=_("Test Name"), null=True)
     result_type = models.CharField(
         max_length=3,
@@ -433,7 +440,9 @@ class Tests(models.Model):
         verbose_name=_("Display at report?"), default=True, blank=True
     )
     sort = models.IntegerField(verbose_name=_("Sort"), help_text=_("Sorted priority"))
-    ext_code = models.CharField(max_length=30, verbose_name=_("External code"))
+    ext_code = models.CharField(
+        max_length=30, verbose_name=_("External code"), null=True
+    )
     dateofcreation = CreationDateTimeField(verbose_name=_("Created at"))
     lastmodification = ModificationDateTimeField(verbose_name=_("Last modified"))
     lastmodifiedby = models.ForeignKey(
@@ -559,14 +568,13 @@ class ProfileTests(models.Model):
         null=True,
         on_delete=models.DO_NOTHING,
     )
-    
+
     def __str__(self):
         return "%s - %s" % (self.profile, self.test)
-        
+
     class Meta:
         verbose_name_plural = "Profile tests"
         verbose_name = "Profile tests"
-    
 
 
 class Patients(models.Model):
@@ -1101,12 +1109,10 @@ class RequestNewReasons(models.Model):
 
     def __str__(self):
         return "%s" % (self.name)
-    
+
     class Meta:
         verbose_name_plural = "Request new reasons"
         verbose_name = "Request new reasons"
-
-
 
 
 class OrderSampleLogs(models.Model):
@@ -1385,6 +1391,7 @@ class InstrumentTests(models.Model):
 
     def __str__(self):
         return "%s %s" % (self.instrument, self.test)
+
     class Meta:
         verbose_name_plural = "Instrument tests"
         verbose_name = "Instrment tests"
@@ -1420,8 +1427,6 @@ class InstrumentFlags(models.Model):
 
     def __str__(self):
         return "%s %s" % (self.instrument, self.flag_code)
-    
-    
 
 
 BATCH_STATUS = (
@@ -1555,21 +1560,21 @@ class TestRefRanges(models.Model):
 
     def __str__(self):
         return "%s" % (self.test)
+
     class Meta:
         verbose_name_plural = "Test ref ranges"
         verbose_name = "Test ref ranges"
-    
-    
 
 
 class Results(models.Model):
-    type =models.CharField(default='R',max_length=1) # R: Result , Q: QC
+    type = models.CharField(default="R", max_length=1)  # R: Result , Q: QC
     order = models.ForeignKey(
         Orders,
         on_delete=models.PROTECT,
         verbose_name=_("Order"),
         related_name="results_order",
-        null=True
+        null=True,
+        blank=True,
     )
     test = models.ForeignKey(
         Tests,
@@ -1577,7 +1582,9 @@ class Results(models.Model):
         verbose_name=_("Test"),
         related_name="results_test",
     )
-    numeric_result = models.FloatField(verbose_name=_("Numeric result"), null=True)
+    numeric_result = models.FloatField(
+        verbose_name=_("Numeric result"), null=True, blank=True
+    )
     alfa_result = models.CharField(
         max_length=100, verbose_name=_("Alfanumeric result"), null=True
     )
@@ -1889,12 +1896,10 @@ class Results(models.Model):
             self.alfa_result,
             self.text_result,
         )
+
     class Meta:
         verbose_name_plural = "Results"
         verbose_name = "Results"
-
-
-    
 
 
 class ResultComments(models.Model):
@@ -2078,7 +2083,6 @@ class OrderResults(models.Model):
         verbose_name = "Result"
 
 
-
 class HistoryOrders(models.Model):
     order = models.ForeignKey(
         Orders,
@@ -2174,6 +2178,7 @@ class BatchGroups(models.Model):
 
     def __str__(self):
         return "%s" % (self.name)
+
     class Meta:
         verbose_name_plural = "Batch groups"
         verbose_name = "Batch groups"
@@ -2343,7 +2348,11 @@ class Labels(models.Model):
 ###
 class Menus(models.Model):
     parent = models.ForeignKey(
-        "self", blank=True, null=True, related_name="menu_parent",on_delete=models.DO_NOTHING
+        "self",
+        blank=True,
+        null=True,
+        related_name="menu_parent",
+        on_delete=models.DO_NOTHING,
     )
     name = models.CharField(
         max_length=100, verbose_name=_("Test Name"), null=True, unique=True
@@ -2406,8 +2415,8 @@ class UserWorkareaFilter(models.Model):
 
 
 class QualityControl(models.Model):
-    instrument = models.ForeignKey(Instruments,on_delete=models.DO_NOTHING)
-    instrument_test = models.ForeignKey(InstrumentTests,on_delete=models.DO_NOTHING)    
+    instrument = models.ForeignKey(Instruments, on_delete=models.DO_NOTHING)
+    instrument_test = models.ForeignKey(InstrumentTests, on_delete=models.DO_NOTHING)
     result = models.ForeignKey(
         Results,
         on_delete=models.PROTECT,
@@ -2415,7 +2424,7 @@ class QualityControl(models.Model):
         related_name="quality_control_result",
         null=True,
     )
-    
+
     lastmodification = ModificationDateTimeField(verbose_name=_("Last modified"))
     lastmodifiedby = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -2427,7 +2436,7 @@ class QualityControl(models.Model):
     )
 
     def __str__(self):
-        return "%s - %s: %s" % (self.instrument, self.test,self.result)
+        return "%s - %s: %s" % (self.instrument, self.instrument_test, self.result)
 
 
 #################################### MIKROBIOLOGI #######################
@@ -2532,9 +2541,9 @@ class MBAntibioticFamilies(models.Model):
         on_delete=models.DO_NOTHING,
     )
 
-
     def __str__(self):
         return "%s - %s" % (self.code, self.name)
+
     class Meta:
         verbose_name_plural = "Mb antibiotic families"
         verbose_name = "Mb antibiotic families"
@@ -2632,7 +2641,6 @@ class MBAntibiograms(models.Model):
         null=True,
         on_delete=models.DO_NOTHING,
     )
-    
 
     def __str__(self):
         return "%s - %s" % (self.code, self.name)
@@ -2666,6 +2674,7 @@ class MBAntibiogramAntibiotics(models.Model):
 
     class Meta:
         unique_together = (("mb_antibiogram", "mb_antibiotic"),)
+
     class Meta:
         verbose_name_plural = "Mb antibiogram antibiotics"
         verbose_name = "Mb antibiogram antibiotics"
@@ -2948,6 +2957,7 @@ class BDGrupJenisDarah(models.Model):
 
     def __str__(self):
         return "%s - %s" % (self.name, self.name)
+
     class Meta:
         verbose_name_plural = "Bd grup jenis darah"
         verbose_name = "Bd grup jenis darah"
@@ -2976,7 +2986,7 @@ class BDJenisDarah(models.Model):
 
     def __str__(self):
         return "%s - %s" % (self.name, self.unit)
-    
+
     class Meta:
         verbose_name_plural = "Bd jenis darah"
         verbose_name = "Bd jenis darah"
@@ -3534,7 +3544,11 @@ class StockIn(models.Model):
 
 
 class StockInLot(models.Model):
-    stock_in = models.ForeignKey(StockIn, related_name="_stockin_lot",on_delete=models.DO_NOTHING,)
+    stock_in = models.ForeignKey(
+        StockIn,
+        related_name="_stockin_lot",
+        on_delete=models.DO_NOTHING,
+    )
     number = models.CharField(max_length=30, verbose_name=_("Lot number"), null=True)
     expired = models.DateField(verbose_name=_("Expired at"), null=True)
     dateofcreation = models.DateTimeField(
@@ -3668,10 +3682,16 @@ class ReturningProduct(models.Model):
 
 class UserExtension(models.Model):
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, related_name="extension", verbose_name=_("Benutzer"),on_delete=models.DO_NOTHING,
+        settings.AUTH_USER_MODEL,
+        related_name="extension",
+        verbose_name=_("Benutzer"),
+        on_delete=models.DO_NOTHING,
     )
     location = models.OneToOneField(
-        Location, related_name="extension", verbose_name=_("Location"),on_delete=models.DO_NOTHING,
+        Location,
+        related_name="extension",
+        verbose_name=_("Location"),
+        on_delete=models.DO_NOTHING,
     )
     product_group = models.ManyToManyField(
         ProductGroup, verbose_name=_("Group product")

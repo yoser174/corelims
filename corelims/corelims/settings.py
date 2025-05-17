@@ -99,8 +99,8 @@ TEMPLATES = [
                 "corelab.context_processors.app_name",
                 "corelab.context_processors.app_version",
             ],
-            'libraries': {
-                'staticfiles' : 'django.templatetags.static',
+            "libraries": {
+                "staticfiles": "django.templatetags.static",
             },
         },
     },
@@ -114,12 +114,12 @@ WSGI_APPLICATION = "corelims.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": "corelims",
         "USER": "corelims",
         "PASSWORD": "corelims",
         "HOST": "localhost",
-        "PORT": "3306",
+        "PORT": "5432",
     }
 }
 
@@ -177,12 +177,12 @@ JASPER_USER = "jasperadmin"
 JASPER_PASS = "jasperadmin"
 JASPER_REST = "http://127.0.0.1:8080/jasperserver/rest_v2/"
 
-DATE_INPUT_FORMATS = ("%d-%m-%Y","%Y-%m-%d")
+DATE_INPUT_FORMATS = ("%d-%m-%Y", "%Y-%m-%d")
 
-CORS_ORIGIN_WHITELIST = [
-     'http://localhost:3000'
-]
+CORS_ORIGIN_WHITELIST = ["http://localhost:3000"]
 
-X_FRAME_OPTIONS = 'SAMEORIGIN'
+X_FRAME_OPTIONS = "SAMEORIGIN"
 
-XS_SHARING_ALLOWED_METHODS = ['POST','GET','OPTIONS', 'PUT', 'DELETE']
+XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
+
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
