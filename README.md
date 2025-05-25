@@ -14,7 +14,7 @@ Server
 Client
 
 Barcode Printer
-Zebra Printer 
+Zebra Printer
 
 # cara install
 
@@ -165,3 +165,197 @@ Change setttings.py
 - change SECRET_KEY
   running: python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
   ganti output dengan generate screte_key ke SECRET_KEY
+
+# Ubuntu install
+
+# 1. install jasper
+
+Step 1. Login to the server
+
+You can check whether you have the proper Ubuntu version installed on your server with the following command:
+
+# lsb_release -a
+
+You should get this output:
+
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description: Ubuntu 22.04.2 LTS
+Release: 22.04
+Codename: jammy
+Before starting, you have to make sure that all Ubuntu OS packages installed on the server are up to date. You can do this by running the following commands:
+
+# apt update -y
+
+Step 2. Create a System User
+
+There is an option to install Jasper Reports on an Ubuntu 22.04 machine without using the installer; we are going to install it manually. First, we need to install Tomcat, and we will install Tomcat under a new system user. Let’s execute the command below to add a new system user.
+
+# useradd -r tomcat -m -d /opt/tomcat --shell /bin/bash
+
+Step 3. Install Tomcat
+We created a new system user in the previous step. And now, we are going to install Tomcat in this step. But first, we need to install Java. Let’s run the command below to install default JDK version 11, which is available on the built-in Ubuntu 22.04 repositories by using the following command:
+
+# apt install default-jdk unzip wget nano -y
+
+When writing this tutorial, the latest stable Tomcat version to download is version 9.0.76. You can go to hand check if they release the more recent version. To proceed with the installation, let’s download the binary distribution file first.
+
+# su - tomcat
+
+$ wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.105/bin/apache-tomcat-9.0.105.tar.gz -O tomcat-9.0.105.tar.gz
+Our user ‘tomcat’ home directory is /opt/tomcat, and the directory was created when we added that user. And, we will install Tomcat under this directory. Let’s extract the downloaded file now.
+
+$ tar -xzvf tomcat-9.0.105.tar.gz -C /opt/tomcat --strip-components=1
+Now, the directory /opt/tomcat contains all Tomcat files. You can verify this with this command.
+
+$ ls -lh /opt/tomcat
+The command will return an output like this:
+
+tomcat@ubuntu22:~$ ls -lh /opt/tomcat/
+total 13M
+drwxr-x--- 2 tomcat tomcat 4.0K May 24 21:40 bin
+-rw-r----- 1 tomcat tomcat 24K May 8 01:36 BUILDING.txt
+drwx------ 2 tomcat tomcat 4.0K May 8 01:36 conf
+-rw-r----- 1 tomcat tomcat 6.1K May 8 01:36 CONTRIBUTING.md
+drwxr-x--- 2 tomcat tomcat 4.0K May 24 21:40 lib
+-rw-r----- 1 tomcat tomcat 56K May 8 01:36 LICENSE
+drwxr-x--- 2 tomcat tomcat 4.0K May 8 01:36 logs
+-rw-r----- 1 tomcat tomcat 2.3K May 8 01:36 NOTICE
+-rw-r----- 1 tomcat tomcat 3.3K May 8 01:36 README.md
+-rw-r----- 1 tomcat tomcat 6.8K May 8 01:36 RELEASE-NOTES
+-rw-r----- 1 tomcat tomcat 17K May 8 01:36 RUNNING.txt
+drwxr-x--- 2 tomcat tomcat 4.0K May 24 21:40 temp
+-rw-rw-r-- 1 tomcat tomcat 13M May 8 01:58 tomcat-9.0.105.tar.gz
+drwxr-x--- 7 tomcat tomcat 4.0K May 8 01:36 webapps
+drwxr-x--- 2 tomcat tomcat 4.0K May 8 01:36 work
+
+Now, exit from user ‘tomcat’ and go back to the root or your sudo user.
+
+$ exit
+We need to create a systemd file to manage our Tomcat service. Let’s create systemd service file for Tomcat.
+
+# nano /etc/systemd/system/tomcat.service
+
+Paste the following into the systemd service file, then save it.
+
+[Unit]
+Description=Apache Tomcat
+After=network.target
+
+[Service]
+Type=forking
+
+User=tomcat
+Group=tomcat
+
+Environment=JAVA_HOME=/usr/lib/jvm/java-1.17.0-openjdk-amd64
+Environment=CATALINA_PID=/opt/tomcat/tomcat.pid
+Environment=CATALINA_HOME=/opt/tomcat
+Environment=CATALINA_BASE=/opt/tomcat
+Environment="CATALINA_OPTS=-Xms1024M -Xmx1024M -server -XX:+UseParallelGC"
+
+ExecStart=/opt/tomcat/bin/startup.sh
+ExecStop=/opt/tomcat/bin/shutdown.sh
+
+ExecReload=/bin/kill $MAINPID
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+Save the file, exit from nano editor then reload systemd for changes to take effect.
+
+# systemctl daemon-reload
+
+At this point, we are not going to start Tomcat.
+
+## Step 5. Download and Deploy JasperReports
+
+In this step, we will download the Jasper Reports server zipped file and install it manually. When writing this article, the latest available version is 8.2.0. You can check if they have the more recent version at https://sourceforge.net/projects/jasperserver/files/JasperServer/.
+
+# su - tomcat
+
+$ wget https://altushost-swe.dl.sourceforge.net/project/jr-community-installers/Server/TIB_js-jrs-cp_8.2.0_bin.zip?viasf=1 -O jasperreports_8.2.0.zip
+Once downloaded, we can extract it directly.
+
+$ unzip jasperreports_8.2.0.zip
+Jasper Reports server supports PostgreSQL, MySQL, Oracle, DB2, and SQL servers. In this article, we are going to use MySQL (MariaDB), and we already installed it. To proceed with the Jasper Report configuration file, let’s copy the sample configuration file first.
+
+Let’s copy /opt/jasperreports-server-cp-8.0.0-bin/buildomatic/sampe-conf/mysql.master_properties to buildomatic directory as default_master.properties
+
+$ cp -a jasperreports-server-cp-8.2.0-bin/buildomatic/sample_conf/postgresql_master.properties jasperreports-server-cp-8.2.0-bin/buildomatic/default_master.properties
+Now, let’s edit jasperreports-server-cp-8.2.0-bin/buildomatic/default_master.properties
+
+$ nano jasperreports-server-cp-8.2.0-bin/buildomatic/default_master.properties
+Add the two lines below
+
+CATALINA_HOME = /opt/tomcat
+CATALINA_BASE = /opt/tomcat
+Then, replace the database configuration part with the following, and make sure the username and database match with the one we created earlier.
+
+dbHost=localhost
+dbUsername=corelims
+dbPassword=corelims
+And set encrypt to true.
+
+encrypt = true
+It should look like this:
+
+CATALINA_HOME = /opt/tomcat
+CATALINA_BASE = /opt/tomcat
+
+dbHost=localhost
+dbUsername=master
+dbPassword=m0d1fyth15
+
+encrypt = true
+Save the file then exit.
+
+Next, let’s enter the buildomatic directory and run the js-install-ce.sh executable file. Prior to running this executable file, make sure Tomcat is NOT running.
+
+$ cd jasperreports-server-cp-8.2.0-bin/buildomatic/
+$ ./js-install-ce.sh
+This will create databases and deploy jasperserver in Tomcat.
+
+Then, let’s edit /opt/tomcat/conf/catalina.policy file.
+
+$ nano /opt/tomcat/conf/catalina.policy
+Append the following into the file.
+
+grant codeBase "file:/groovy/script" {
+permission java.io.FilePermission "${catalina.home}${file.separator}webapps${file.separator}
+jasperserver-pro${file.separator}WEB-INF${file.separator}classes${file.separator}-", "read";
+permission java.io.FilePermission "${catalina.home}${file.separator}webapps${file.separator}
+jasperserver-pro${file.separator}WEB-INF${file.separator}lib${file.separator}\*", "read";
+permission java.util.PropertyPermission "groovy.use.classvalue", "read";
+};
+
+Save the file then exit.
+
+Then, we also need to edit applicationContext.xml file.
+
+$ nano /opt/tomcat/webapps/jasperserver/WEB-INF/applicationContext.xml
+Insert these into the reportsProtectionDomainProvider list.
+
+    <bean class="java.io.FilePermission">
+        <constructor-arg value="${catalina.home}${file.separator}webapps
+        ${file.separator}jasperserver-pro${file.separator}
+        WEB-INF${file.separator}classes${file.separator}-"/>
+        <constructor-arg value="read"/>
+    </bean>
+    <bean class="java.io.FilePermission">
+        <constructor-arg value="${catalina.home}${file.separator}webapps
+        ${file.separator}jasperserver-pro${file.separator}WEB-INF
+        ${file.separator}lib${file.separator}*"/>
+        <constructor-arg value="read"/>
+    </bean>
+
+Once completed, you can start Tomcat and wait for a few moments until everything is running.
+
+$ exit
+
+# systemctl start tomcat
+
+Then, you can navigate to http://YOUR_SERVER_IP_ADDRESS:8080/jasperserver/ to access JasperReports Server using the default login credentials.
+
+username: jasperadmin
+password: jasperadmin

@@ -174,6 +174,100 @@ urlpatterns = [
         views.worklist_print,
         name="worklist_print",
     ),
+    #################
+    # Order Results
+    #################
+    re_path(r"^workarea/$", views.show_workarea, name="workarea"),
+    re_path(
+        r"^orders/results/(?P<pk>\d+)/$", views.order_results, name="order_results"
+    ),
+    # url(r'^orders/results/(?P<pk>\d+)/validate/$', views.order_results_validate, name='order_results_validate'),
+    re_path(
+        r"^orders/results/(?P<pk>\d+)/techval/$",
+        views.order_results_techval,
+        name="order_results_techval",
+    ),
+    re_path(
+        r"^orders/results/(?P<pk>\d+)/medval/$",
+        views.order_results_medval,
+        name="order_results_medval",
+    ),
+    re_path(
+        r"^orders/results/(?P<pk>\d+)/print/$",
+        views.order_results_print,
+        name="order_results_print",
+    ),
+    re_path(
+        r"^orders/results/(?P<pk>\d+)/repeat/$",
+        views.order_results_repeat,
+        name="order_results_repeat",
+    ),
+    re_path(
+        r"^orders/results/(?P<pk>\d+)/history/$",
+        views.order_results_history,
+        name="order_results_history",
+    ),
+    re_path(
+        r"^orders/results/(?P<pk>\d+)/print_draft/$",
+        views.order_result_print_draft,
+        name="order_results_print_draft",
+    ),
+    re_path(
+        r"^orders/resultreport/(?P<pk>\d+)/$",
+        views.order_result_report,
+        name="order_results_report",
+    ),
+    #################
+    # Workareas
+    #################
+    re_path(
+        r"^workarea/(?P<pk>\d+)/$", views.show_workarea_group, name="workarea_group"
+    ),
+    re_path(
+        r"^workarea/(?P<area_pk>\d+)/(?P<order_pk>\d+)/$",
+        views.order_results_wa,
+        name="order_results_wa",
+    ),
+    re_path(
+        r"^workarea/(?P<area_pk>\d+)/(?P<order_pk>\d+)/techval/$",
+        views.order_results_techval,
+        name="order_results_techval_wa",
+    ),
+    re_path(
+        r"^workarea/(?P<area_pk>\d+)/capture/$",
+        views.capture_workarea,
+        name="capture_workarea",
+    ),
+    re_path(
+        r"^workarea/(?P<area_pk>\d+)/(?P<order_pk>\d+)/medval/$",
+        views.order_results_medval,
+        name="order_results_medval_wa",
+    ),
+    re_path(
+        r"^workarea/(?P<area_pk>\d+)/(?P<order_pk>\d+)/print/$",
+        views.order_results_print_wa,
+        name="order_results_print_wa",
+    ),
+    re_path(
+        r"^workarea/(?P<area_pk>\d+)/(?P<order_pk>\d+)/repeat/$",
+        views.order_results_repeat,
+        name="order_results_repeat_wa",
+    ),
+    re_path(
+        r"^workarea/(?P<area_pk>\d+)/(?P<order_pk>\d+)/history/$",
+        views.workarea_order_results_history,
+        name="workarea_order_results_history",
+    ),
+    re_path(
+        r"^workarea/(?P<area_pk>\d+)/(?P<order_pk>\d+)/print_draft/$",
+        views.order_result_print_draft,
+        name="order_results_print_draft_wa",
+    ),
+    re_path(
+        r"^workarea/(?P<area_pk>\d+)/(?P<order_pk>\d+)/$",
+        views.order_result_report,
+        name="order_results_report_wa",
+    ),
     # Quality Control
     re_path(
         r"^quality_control/$", views.QualityControl.as_view(), name="quality_control"
@@ -182,6 +276,40 @@ urlpatterns = [
         r"^quality_control/create/$",
         views.CreateQualityControl.as_view(),
         name="qualitycontrol_create",
+    ),
+    #################
+    # Complete orders
+    #################
+    re_path(r"^complete/$", views.show_complete_orders, name="complete_orders"),
+    re_path(
+        r"^complete/results/(?P<pk>\d+)/$",
+        views.complete_results,
+        name="complete_results",
+    ),
+    re_path(
+        r"^complete/results/(?P<pk>\d+)/print/$",
+        views.order_results_print,
+        name="order_results_print",
+    ),
+    re_path(
+        r"^complete/results/(?P<pk>\d+)/repeat/$",
+        views.order_results_repeat,
+        name="order_results_repeat",
+    ),
+    re_path(
+        r"^complete/results/(?P<pk>\d+)/history/$",
+        views.order_results_history,
+        name="order_results_history",
+    ),
+    re_path(
+        r"^complete/results/(?P<pk>\d+)/print_draft/$",
+        views.order_result_print_draft,
+        name="order_results_print_draft",
+    ),
+    re_path(
+        r"^complete/resultreport/(?P<pk>\d+)/$",
+        views.order_result_report,
+        name="order_results_report",
     ),
     # Reports
     re_path(r"^reports/orders/$", views.report_orders, name="rep_orders_list"),

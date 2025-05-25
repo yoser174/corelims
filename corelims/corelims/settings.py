@@ -37,7 +37,7 @@ SECRET_KEY = "&ri3fnsxf6abf2=s_&vh7uub%72&8$(h*vklf1kr_vboeqkxka"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -186,3 +186,5 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+CSRF_TRUSTED_ORIGINS = ['https://demo.corelims.xyz']

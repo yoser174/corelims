@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -1232,16 +1233,16 @@ def order_results_print(request, pk):
 
     group_id = request.GET.get("group_id")
 
-    ts = datetime.today().strftime("%Y%m%d%H%M%S")
-    output = settings.MEDIA_ROOT + "\\report\\" + str(order.number) + "_" + ts + ".pdf"
+    ts = datetime.datetime.today().strftime("%Y%m%d%H%M%S")
+    output = os.path.join(settings.MEDIA_ROOT, "report")
+    if not os.path.exists(output):
+        os.makedirs(output)
+
+    output = os.path.join(output, str(order.number) + "_" + ts + ".pdf")
 
     res_rep = report.JasperServer()
 
     b_ok, content = res_rep.get_report(pk, group_id)
-
-    # print b_ok
-
-    # print content
 
     if b_ok:
         fd = open(output, "wb")
