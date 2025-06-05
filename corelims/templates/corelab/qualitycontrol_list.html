@@ -83,47 +83,21 @@
             </div>
         </div>
   
-  
-        
- <script type="text/javascript">
- $('input[name="order_date"]').daterangepicker({locale: {
-      format: 'YYYY-MM-DD'
-    }});
- $('#daterange').on('apply.daterangepicker', function(ev, picker) {
-  console.log(picker.startDate.format('YYYY-MM-DD'));
-  console.log(picker.endDate.format('YYYY-MM-DD'));
-});
- </script>
 
 
 
- <div>
-  <canvas id="myChart"></canvas>
-</div>
-
-
-<script>
-  const ctx = document.getElementById('myChart');
-
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['1 Juni', '2 Juni', '3 juni', '4 juni', '5 juni', '8 juni'],
-      datasets: [{
-        label: 'QC Results',
-        data: [12, 19, 3, 5, 2, 3],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: false
-        }
-      }
-    }
-  });
-</script>
+        <canvas id="leveyJenningsChart"></canvas>
+        <script>
+            fetch("{% url 'line_chart_json' %}")
+                .then(response => response.json())
+                .then(data => {
+                    var ctx = document.getElementById('leveyJenningsChart').getContext('2d');
+                    new Chart(ctx, {
+                      type: 'line',
+                      data: data,
+                  });
+                });
+        </script>
 
  
 

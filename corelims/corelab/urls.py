@@ -353,4 +353,9 @@ urlpatterns = [
     re_path(r"^avatar/", include("avatar.urls")),
     # json
     re_path(r"^chart_data/", views.qc_data, name="qc_data"),
+    re_path("^business-logic/", include("business_logic.urls")),
+    re_path("^nested_admin/", include("nested_admin.urls")),
+    # chart
+    # re_path("chart", views.line_chart, name="line_chart"),
+    re_path("chartJSON", views.line_chart_json, name="line_chart_json"),
 ]

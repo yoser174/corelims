@@ -24,6 +24,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+STATIC_ROOT = os.path.join(BASE_DIR, "statics")
+
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
@@ -45,6 +47,7 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "corelab.apps.CorelabConfig",
+    # "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -67,6 +70,12 @@ INSTALLED_APPS = [
     "jquery",
     "dal",
     "dal_select2",
+    "ace_overlay",
+    "adminsortable2",
+    "nested_admin",
+    "polymorphic",
+    "business_logic",
+    "chartjs",
 ]
 
 MIDDLEWARE = [
@@ -168,6 +177,7 @@ LOGIN_URL_BILLING = "/billing/login"
 APP_NAME = "corelims"
 VERSION = "0.0.2"
 
+
 RESULT_REPORT_FILE_HEADER = "LAB TEST"
 RESULT_REPORT_FILE_FOOTER = "LAB TEST FOOTER"
 RESULT_REPORT_FILE_MAIN = "TEST"
@@ -187,4 +197,4 @@ XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
-CSRF_TRUSTED_ORIGINS = ['https://demo.corelims.xyz']
+CSRF_TRUSTED_ORIGINS = ["https://demo.corelims.xyz"]

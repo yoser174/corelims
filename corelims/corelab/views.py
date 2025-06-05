@@ -1,17 +1,22 @@
 import os
+import statistics
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Avg
 
+from business_logic.models import Program
 
 from django.contrib.auth.models import User
 from rest_framework import generics, viewsets
 from rest_framework import filters as resfilters
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+
+from corelab.models.models import Results
 from .serializers import (
     OrdersSerializer,
     PatientsSerializer,
@@ -90,6 +95,12 @@ translation.activate(user_language)
 UPDATE = """
 """
 settings.UPDATE = UPDATE
+
+
+from django.views.generic import TemplateView
+from chartjs.views.lines import BaseLineChartView
+from random import shuffle
+from chartjs.colors import COLORS, next_color
 
 
 # ######################
@@ -714,6 +725,9 @@ def order_add_patient(request):
 def create_order_from_patient(request, patient_pk):
     patient = models.Patients.objects.get(pk=patient_pk)
     order = patient.create_order()
+    program = Program.objects.get(code="on_order_create")
+    program_version = program.versions.order_by("id").last()
+    program_version.execute(order=order, log=True, debug=True)
     return redirect("order_edit", pk=order.pk)
 
 
@@ -3221,3 +3235,66 @@ def json_sample_receive(request, order_pk):
 def qc_data(request):
     data = list(QualityControl.objects.values())  # Fetch data from the model
     return JsonResponse(data, safe=False)
+
+
+class LineChartJSONView(BaseLineChartView):
+    def get_labels(self):
+        qc_values = Results.objects.filter(type="Q").all()
+        return list(
+            qc_value.lastmodification.strftime("%Y-%m-%d") for qc_value in qc_values
+        )
+
+    def get_datasets(self):
+        qc_values = Results.objects.filter(type="Q").all()
+        avg_value = Results.objects.filter(type="Q").aggregate(
+            avg_value=Avg("numeric_result")
+        )["avg_value"]
+        qc_count = Results.objects.filter(type="Q").count()
+        data = list(qc_value.numeric_result for qc_value in qc_values)
+        sd = statistics.stdev(data)
+        print(sd)
+        return [
+            {
+                "label": "Data Points",
+                # "data": [10, 12, 8, 15, 9],
+                "data": data,
+                "borderColor": "blue",
+                "backgroundColor": "transparent",
+                "pointRadius": 5,
+            },
+            {
+                "label": "Mean",
+                "data": [avg_value] * qc_count,
+                "borderColor": "green",
+                "borderDash": [5, 5],
+                "backgroundColor": "transparent",
+            },
+            {
+                "label": "Upper Control Limit (UCL)",
+                "data": [avg_value + (sd * 3)] * qc_count,
+                "borderColor": "red",
+                "borderDash": [5, 5],
+                "backgroundColor": "transparent",
+            },
+            {
+                "label": "Lower Control Limit (LCL)",
+                "data": [avg_value - (sd * 3)] * qc_count,
+                "borderColor": "red",
+                "borderDash": [5, 5],
+                "backgroundColor": "transparent",
+            },
+        ]
+
+    def get_options(self):
+        options = {
+            "responsive": True,
+            "maintainAspectRatio": False,
+            "scales": {
+                "y": {"beginAtZero": False},
+            },
+        }
+        return options
+
+
+line_chart = TemplateView.as_view(template_name="line_chart.html")
+line_chart_json = LineChartJSONView.as_view()
