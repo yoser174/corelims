@@ -3270,6 +3270,20 @@ class LineChartJSONView(BaseLineChartView):
                 "backgroundColor": "transparent",
             },
             {
+                "label": "+2sd",
+                "data": [avg_value + (sd * 2)] * qc_count,
+                "borderColor": "yellow",
+                "borderDash": [5, 5],
+                "backgroundColor": "transparent",
+            },
+            {
+                "label": "-2sd",
+                "data": [avg_value - (sd * 2)] * qc_count,
+                "borderColor": "yellow",
+                "borderDash": [5, 5],
+                "backgroundColor": "transparent",
+            },
+            {
                 "label": "Upper Control Limit (UCL)",
                 "data": [avg_value + (sd * 3)] * qc_count,
                 "borderColor": "red",

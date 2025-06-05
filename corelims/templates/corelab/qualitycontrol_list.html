@@ -84,9 +84,9 @@
         </div>
   
 
-
-
+<div class="panel panel-default">
         <canvas id="leveyJenningsChart"></canvas>
+</div>
         <script>
             fetch("{% url 'line_chart_json' %}")
                 .then(response => response.json())

@@ -174,8 +174,8 @@ SELECT2_TRANSLATIONS = "en"
 
 LOGIN_URL_BILLING = "/billing/login"
 
-APP_NAME = "corelims"
-VERSION = "0.0.2"
+APP_NAME = "simpleFlow"
+VERSION = "0.0.3"
 
 
 RESULT_REPORT_FILE_HEADER = "LAB TEST"
