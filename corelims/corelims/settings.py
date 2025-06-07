@@ -198,3 +198,10 @@ XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 CSRF_TRUSTED_ORIGINS = ["https://demo.corelims.xyz"]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ]
+}

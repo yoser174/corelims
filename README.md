@@ -97,6 +97,8 @@ Zebra Printer
 
   4.10 Parameter
 
+- atau: django-admin loaddata corelims/fixtures/parameters.json
+
 - tambahkan parameter minimum
   name char_value ket.
   ORG_LAB_NAME Lab test nama lab

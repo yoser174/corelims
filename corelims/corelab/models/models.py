@@ -3801,6 +3801,17 @@ class StockAdjust(models.Model):
 
 
 class Closing(models.Model):
+    """
+    class to handle Closing.
+    This class represents a closing period for inventory management.
+    It includes details such as the closing date, the user who created the closing,
+    and timestamps for creation and last modification.
+    The closing date indicates when the inventory was closed for adjustments,
+    and the created_by field tracks the user responsible for the closing.
+    This class is used to manage inventory closing periods, ensuring accurate records
+    and facilitating the closing process.
+    """
+
     closing_date = models.DateField(verbose_name=_("Closing date"))
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -3816,6 +3827,16 @@ class Closing(models.Model):
 
 
 class ClosingStockIn(models.Model):
+    """
+    class to handle Closing Stock In.
+    This class represents a record of stock that has been added to the inventory
+    during a closing period. It includes details such as the closing date, storage location,
+    product information, lot number, expiration date, quantity, unit of measurement,
+    and timestamps for creation and last modification.
+    It also keeps track of the user who last modified the record.
+    This class is used to manage and track stock movements during closing periods,
+    ensuring accurate inventory records and facilitating the closing process."""
+
     closing = models.ForeignKey(
         Closing, verbose_name=_("Closing"), on_delete=models.PROTECT, null=True
     )
@@ -3855,6 +3876,12 @@ class ClosingStockIn(models.Model):
 
 
 class ClosingUsingProduct(models.Model):
+    """
+    class to handle Closing Using Product.
+    This class represents a record of a product that has been used
+    during a closing period. It includes details such as the closing date,
+    """
+
     closing = models.ForeignKey(
         Closing, verbose_name=_("Closing"), on_delete=models.PROTECT, null=True
     )
@@ -3888,9 +3915,17 @@ class ClosingUsingProduct(models.Model):
 
 
 ########################## Gambaran Darah Tepi ##################################
-
-
 class PBSTest(models.Model):
+    """
+    Class to handle PBSTest.
+    This class represents a test that can be performed on a blood sample.
+    It is linked to a specific test and contains information about the test name,
+    whether it is active, its sort order, and timestamps for creation and last modification.
+    It also keeps track of the user who last modified the test.
+    This class is used to manage and organize tests within the system, allowing for
+    easy retrieval and display of test information in the context of blood sample analysis.
+    """
+
     test = models.ForeignKey(Tests, verbose_name=_("test"), on_delete=models.PROTECT)
     name = models.CharField(max_length=50, verbose_name=_("Nama test"))
     active = models.BooleanField(verbose_name=_("Active?"), default=True, blank=True)
@@ -3939,31 +3974,29 @@ class PBSResult(models.Model):
         unique_together = (("order", "pbs_test"),)
 
 
-"""
-
-@receiver(models.signals.post_save, sender=HistoryOrders)
-def historyorder_clean_old_record(sender, instance, created, **kwargs):
-    if created:
-        # cek if pareameter set in parameters
-        parameter = Parameters.objects.filter(name = 'HISTORYORDER_DAYS_KEEP').values('num_value')
-        if parameter.count() < 1:
-            # doest have default value, create it default 30 days
-            create_par = Parameters(name = 'HISTORYORDER_DAYS_KEEP', num_value = 30 )
-            create_par.save()
-            parameter = Parameters.objects.filter(name = 'HISTORYORDER_DAYS_KEEP').values('num_value')
-        history = HistoryOrders.objects.filter(action_date__gte=datetime.now()-timedelta(days=int(parameter[0]['num_value'])))
-        history.delete()
-"""
-
-
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
+    """
+    Create a token when a new user is created.
+    This function is connected to the post_save signal of the User model.
+    It checks if the user is newly created and then creates a Token for that user.
+    Args:
+        sender (Model): The model class that sent the signal.
+        instance (User): The instance of the user that was created or updated.
+        created (bool): A boolean indicating whether a new instance was created.
+        **kwargs: Additional keyword arguments.
+    """
     if created:
         Token.objects.create(user=instance)
 
 
 @receiver(models.signals.post_save, sender=Worklists)
 def create_worklist_test(sender, instance, created, **kwargs):
+    """
+    create worklist test when a new worklist is created.
+    This function checks if the worklist is newly created and then
+    checks for pending OrderResults. If there are pending results that
+    """
     if created:
         have_test = False
         res_pend = OrderResults.objects.filter(validation_status=0).all()
@@ -3988,6 +4021,14 @@ def create_worklist_test(sender, instance, created, **kwargs):
 
 @receiver(models.signals.post_save, sender=Results)
 def create_result(sender, instance, created, **kwargs):
+    """
+    Create or update result in OrderResults when a new result is created.
+    This function checks if the result is new and updates the corresponding
+    OrderResults entry with the unit, reference range, and pathology mark.
+    This is triggered after a Results instance is saved.
+    This function is connected to the post_save signal of the Results model.
+    It updates the OrderResults model with the unit, reference range, and pathology mark
+    """
     if created:
         # update unit
         tes_par = TestParameters.objects.filter(test_id=instance.test_id)
@@ -4000,3 +4041,5 @@ def create_result(sender, instance, created, **kwargs):
         OrderResults.objects.filter(
             order_id=instance.order_id, test_id=instance.test_id
         ).update(patologi_mark=instance.mark, ref_range=instance.ref_range)
+
+

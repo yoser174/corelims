@@ -12,6 +12,7 @@ router.register(r"doctors", views.DoctorViewSet)
 router.register(r"origins", views.OriginViewSet)
 router.register(r"insurances", views.InsuranceViewSet)
 router.register(r"results", views.ResultViewSet)
+router.register(r"instruments", views.InstrumentViewSet)
 
 # URL patterns
 urlpatterns = [

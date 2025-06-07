@@ -1,0 +1,79 @@
+[
+{
+  "model": "corelab.parameters",
+  "pk": 2,
+  "fields": {
+    "name": "MENU_BTN_PRINT_RECEIPT",
+    "char_value": null,
+    "num_value": 1,
+    "lastmodification": "2025-05-24T13:00:25.035Z",
+    "lastmodifiedby": null
+  }
+},
+{
+  "model": "corelab.parameters",
+  "pk": 3,
+  "fields": {
+    "name": "MENU_BTN_PRINT_BILL",
+    "char_value": null,
+    "num_value": 0,
+    "lastmodification": "2025-05-24T13:00:43.730Z",
+    "lastmodifiedby": null
+  }
+},
+{
+  "model": "corelab.parameters",
+  "pk": 4,
+  "fields": {
+    "name": "MENU_BTN_PRINT_BARCODE",
+    "char_value": null,
+    "num_value": 1,
+    "lastmodification": "2025-05-24T13:01:50.231Z",
+    "lastmodifiedby": null
+  }
+},
+{
+  "model": "corelab.parameters",
+  "pk": 6,
+  "fields": {
+    "name": "ORG_LAB_NAME",
+    "char_value": "RSUD simpleFlow",
+    "num_value": null,
+    "lastmodification": "2025-06-05T07:24:59.048Z",
+    "lastmodifiedby": null
+  }
+},
+{
+  "model": "corelab.parameters",
+  "pk": 7,
+  "fields": {
+    "name": "ORG_LAB_ADDRESS",
+    "char_value": "Jakarta",
+    "num_value": null,
+    "lastmodification": "2025-05-25T05:13:18.092Z",
+    "lastmodifiedby": null
+  }
+},
+{
+  "model": "corelab.parameters",
+  "pk": 8,
+  "fields": {
+    "name": "ORG_LAB_CITY",
+    "char_value": "Jakarta",
+    "num_value": null,
+    "lastmodification": "2025-05-25T05:13:28.220Z",
+    "lastmodifiedby": null
+  }
+},
+{
+  "model": "corelab.parameters",
+  "pk": 10,
+  "fields": {
+    "name": "ORDER_NO",
+    "char_value": "250531",
+    "num_value": 2,
+    "lastmodification": "2025-05-31T05:28:35.301Z",
+    "lastmodifiedby": null
+  }
+}
+]
