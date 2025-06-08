@@ -13,7 +13,11 @@ router.register(r"origins", views.OriginViewSet)
 router.register(r"insurances", views.InsuranceViewSet)
 router.register(r"results", views.ResultViewSet)
 router.register(r"instruments", views.InstrumentViewSet)
-
+router.register(r"order_samples", views.OrderSamplesViewSet)
+router.register(r"instrument_tests", views.InstrumentTestsViewSet)
+router.register(r"order_results", views.OrderResultsViewSet)
+router.register(r"history_orders", views.HistoryOrdersViewSet)
+router.register(r"tests", views.TestsViewSet)
 # URL patterns
 urlpatterns = [
     # Home and authentication

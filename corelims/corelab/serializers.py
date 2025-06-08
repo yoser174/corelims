@@ -1,3 +1,10 @@
+from corelab.models.models import (
+    HistoryOrders,
+    InstrumentTests,
+    OrderSamples,
+    Results,
+    Tests,
+)
 from .models import (
     Orders,
     OrderResults,
@@ -118,7 +125,7 @@ class ResultsSerializer(serializers.ModelSerializer):
         It specifies that the serializer is for the OrderResults model and includes all fields.
         """
 
-        model = OrderResults
+        model = Results
         fields = "__all__"
 
 
@@ -136,4 +143,65 @@ class InstrumentsSerializer(serializers.ModelSerializer):
         """
 
         model = Instruments
+        fields = "__all__"
+
+
+class OrderSamplesSerializer(serializers.ModelSerializer):
+    """
+    OrderSamplesSerializer
+    Serializer for the OrderSamples model.
+    """
+
+    class Meta:
+        """
+        Meta class for InstrumentsSerializer
+        This class defines the model and fields for the InstrumentsSerializer.
+        It specifies that the serializer is for the Instruments model and includes all fields.
+        """
+
+        model = OrderSamples
+        fields = "__all__"
+
+
+class InstrumentTestsSerializer(serializers.ModelSerializer):
+    """InstrumentTestsSerializer
+    Serializer for the InstrumentTests model."""
+
+    class Meta:
+        """Meta class for InstrumentTestsSerializer"""
+
+        model = InstrumentTests
+        fields = "__all__"
+
+
+class OrderResultsSerializer(serializers.ModelSerializer):
+    """OrderResultsSerializer
+    Serializer for the OrderResults model."""
+
+    class Meta:
+        """Meta class for OrderResultsSerializer"""
+
+        model = OrderResults
+        fields = "__all__"
+
+
+class HistoryOrdersSerializer(serializers.ModelSerializer):
+    """HistoryOrdersSerializer
+    Serializer for the HistoryOrders model."""
+
+    class Meta:
+        """Meta class for HistoryOrdersSerializer"""
+
+        model = HistoryOrders
+        fields = "__all__"
+
+
+class TestsSerializer(serializers.ModelSerializer):
+    """TestsSerializer
+    Serializer for the Tests model."""
+
+    class Meta:
+        """Meta class for TestsSerializer"""
+
+        model = Tests
         fields = "__all__"
